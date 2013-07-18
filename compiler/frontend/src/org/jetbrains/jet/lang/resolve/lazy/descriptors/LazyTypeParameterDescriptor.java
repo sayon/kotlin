@@ -219,6 +219,11 @@ public class LazyTypeParameterDescriptor implements TypeParameterDescriptor, Laz
             }
 
             @Override
+            public boolean isDenotable() {
+                return true;
+            }
+
+            @Override
             public ClassifierDescriptor getDeclarationDescriptor() {
                 return LazyTypeParameterDescriptor.this;
             }
