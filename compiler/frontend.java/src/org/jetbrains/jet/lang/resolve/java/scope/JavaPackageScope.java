@@ -23,7 +23,10 @@ import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -37,20 +40,16 @@ public final class JavaPackageScope extends JavaBaseScope {
     private final PsiPackage psiPackage;
     @NotNull
     private final FqName packageFQN;
-    @NotNull
-    private final PsiClassFinder psiClassFinder;
 
     public JavaPackageScope(
             @NotNull NamespaceDescriptor descriptor,
             @NotNull PsiPackage psiPackage,
             @NotNull FqName packageFQN,
-            @NotNull JavaDescriptorResolver javaDescriptorResolver,
-            @NotNull PsiClassFinder psiClassFinder
+            @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, javaDescriptorResolver, MembersProvider.forPackage(psiClassFinder, psiPackage));
+        super(descriptor, javaDescriptorResolver, MembersProvider.forPackage(psiPackage));
         this.psiPackage = psiPackage;
         this.packageFQN = packageFQN;
-        this.psiClassFinder = psiClassFinder;
     }
 
     @Override
@@ -98,7 +97,7 @@ public final class JavaPackageScope extends JavaBaseScope {
             }
         }
 
-        for (PsiClass psiClass : psiClassFinder.findPsiClasses(psiPackage)) {
+        for (PsiClass psiClass : DescriptorResolverUtils.filterDuplicateClasses(psiPackage.getClasses())) {
             if (DescriptorResolverUtils.isCompiledKotlinPackageClass(psiClass)) continue;
 
             if (psiClass instanceof JetJavaMirrorMarker) continue;

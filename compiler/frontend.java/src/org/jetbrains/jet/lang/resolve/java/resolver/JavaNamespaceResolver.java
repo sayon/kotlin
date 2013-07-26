@@ -184,7 +184,7 @@ public final class JavaNamespaceResolver {
                 trace.record(BindingContext.NAMESPACE, psiPackage, namespaceDescriptor);
             }
 
-            return new JavaPackageScope(namespaceDescriptor, psiPackage, fqName, javaDescriptorResolver, psiClassFinder);
+            return new JavaPackageScope(namespaceDescriptor, psiPackage, fqName, javaDescriptorResolver);
         }
 
         PsiClass psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
@@ -204,7 +204,7 @@ public final class JavaNamespaceResolver {
             trace.record(BindingContext.NAMESPACE, psiClass, namespaceDescriptor);
         }
 
-        return new JavaClassStaticMembersScope(namespaceDescriptor, fqName, psiClass, psiClassFinder, javaDescriptorResolver);
+        return new JavaClassStaticMembersScope(namespaceDescriptor, fqName, psiClass, javaDescriptorResolver);
     }
 
     private static boolean isOldKotlinPackageClass(@NotNull PsiClass psiClass) {
