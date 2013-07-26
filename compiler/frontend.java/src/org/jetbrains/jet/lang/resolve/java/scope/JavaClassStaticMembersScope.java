@@ -34,8 +34,6 @@ import java.util.Collections;
 public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     @NotNull
     private final FqName packageFQN;
-    @NotNull
-    private final PsiClass psiClass;
 
     public JavaClassStaticMembersScope(
             @NotNull NamespaceDescriptor descriptor,
@@ -46,7 +44,6 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     ) {
         super(descriptor, psiClass, MembersProvider.forClass(psiClassFinder, psiClass, true), javaDescriptorResolver);
         this.packageFQN = packageFQN;
-        this.psiClass = psiClass;
     }
 
     @Override

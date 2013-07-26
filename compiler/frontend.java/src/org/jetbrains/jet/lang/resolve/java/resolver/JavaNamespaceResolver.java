@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
-import org.jetbrains.jet.lang.resolve.java.scope.JavaBaseScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaPackageScope;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -117,15 +116,10 @@ public final class JavaNamespaceResolver {
                 qualifiedName
         );
 
-        JetScope newScope = createNamespaceScope(qualifiedName, javaNamespaceDescriptor);
+        JetScope newScope = createNamespaceScope(qualifiedName, javaNamespaceDescriptor, true);
         if (newScope == null) {
             return null;
         }
-
-        if (newScope instanceof JavaBaseScope) {
-            trace.record(BindingContext.NAMESPACE, ((JavaBaseScope) newScope).getPsiElement(), javaNamespaceDescriptor);
-        }
-
 
         javaNamespaceDescriptor.setMemberScope(newScope);
 
@@ -148,11 +142,8 @@ public final class JavaNamespaceResolver {
     }
 
     @Nullable
-    private JetScope createNamespaceScope(
-            @NotNull FqName fqName,
-            @NotNull NamespaceDescriptor namespaceDescriptor
-    ) {
-        JetScope namespaceScope = doCreateNamespaceScope(fqName, namespaceDescriptor);
+    private JetScope createNamespaceScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor namespaceDescriptor, boolean record) {
+        JetScope namespaceScope = doCreateNamespaceScope(fqName, namespaceDescriptor, record);
         cache(fqName, namespaceScope);
         return namespaceScope;
     }
@@ -160,7 +151,8 @@ public final class JavaNamespaceResolver {
     @Nullable
     private JetScope doCreateNamespaceScope(
             @NotNull FqName fqName,
-            @NotNull NamespaceDescriptor namespaceDescriptor
+            @NotNull NamespaceDescriptor namespaceDescriptor,
+            boolean record
     ) {
         PsiPackage psiPackage = psiClassFinder.findPsiPackage(fqName);
         if (psiPackage != null) {
@@ -188,6 +180,10 @@ public final class JavaNamespaceResolver {
             }
 
             // Otherwise (if psiClass is null or doesn't have a supported Kotlin annotation), it's a Java class and the package is empty
+            if (record) {
+                trace.record(BindingContext.NAMESPACE, psiPackage, namespaceDescriptor);
+            }
+
             return new JavaPackageScope(namespaceDescriptor, psiPackage, fqName, javaDescriptorResolver, psiClassFinder);
         }
 
@@ -201,7 +197,13 @@ public final class JavaNamespaceResolver {
         if (!hasStaticMembers(psiClass)) {
             return null;
         }
+
         trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
+
+        if (record) {
+            trace.record(BindingContext.NAMESPACE, psiClass, namespaceDescriptor);
+        }
+
         return new JavaClassStaticMembersScope(namespaceDescriptor, fqName, psiClass, psiClassFinder, javaDescriptorResolver);
     }
 
@@ -233,7 +235,7 @@ public final class JavaNamespaceResolver {
         if (alreadyResolvedScope != null) {
             return alreadyResolvedScope;
         }
-        return createNamespaceScope(fqName, namespaceDescriptor);
+        return createNamespaceScope(fqName, namespaceDescriptor, false);
     }
 
     @Nullable

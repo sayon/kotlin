@@ -37,8 +37,6 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     private ConstructorDescriptor primaryConstructor = null;
     @NotNull
     private final ClassDescriptor descriptor;
-    @NotNull
-    private final PsiClass psiClass;
     private final boolean staticMembersOfPsiClass;
 
     public JavaClassNonStaticMembersScope(
@@ -50,7 +48,6 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     ) {
         super(descriptor, psiClass, MembersProvider.forClass(psiClassFinder, psiClass, staticMembersOfPsiClass), javaDescriptorResolver);
         this.descriptor = descriptor;
-        this.psiClass = psiClass;
         this.staticMembersOfPsiClass = staticMembersOfPsiClass;
     }
 
