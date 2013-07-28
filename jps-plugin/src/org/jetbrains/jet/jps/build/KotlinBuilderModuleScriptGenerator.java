@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionGenerator;
 import org.jetbrains.jet.compiler.runner.KotlinModuleXmlGenerator;
+import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
@@ -127,6 +128,13 @@ public class KotlinBuilderModuleScriptGenerator {
                 File file = new File(JpsPathUtil.urlToPath(root.getUrl()));
 
                 annotationRootFiles.add(file);
+            }
+
+            if (annotationRoots.isEmpty() && dependencyElement instanceof JpsSdkDependency
+                && !"false".equals(System.getProperty("jps.kotlin.add.default.jdk.annotations"))) {
+                // No JDK annotations, locate them in the Kotlin distribution and add to the project
+                File jdkAnnotationsPath = PathUtil.getKotlinPathsForJpsPlugin().getJdkAnnotationsPath();
+                annotationRootFiles.add(jdkAnnotationsPath);
             }
         }
 
