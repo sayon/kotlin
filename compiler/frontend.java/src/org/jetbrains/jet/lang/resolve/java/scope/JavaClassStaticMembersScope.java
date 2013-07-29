@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.java.scope;
 
-import com.intellij.psi.PsiClass;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -24,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -34,17 +34,17 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     @NotNull
     private final FqName packageFQN;
     @NotNull
-    private final PsiClass psiClass;
+    private final JavaClass javaClass;
 
     public JavaClassStaticMembersScope(
             @NotNull NamespaceDescriptor descriptor,
             @NotNull FqName packageFQN,
-            @NotNull PsiClass psiClass,
+            @NotNull JavaClass javaClass,
             @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, MembersProvider.forClass(psiClass, true), javaDescriptorResolver);
+        super(descriptor, MembersProvider.forClass(javaClass, true), javaDescriptorResolver);
         this.packageFQN = packageFQN;
-        this.psiClass = psiClass;
+        this.javaClass = javaClass;
     }
 
     @Override
@@ -56,7 +56,7 @@ public final class JavaClassStaticMembersScope extends JavaClassMembersScope {
     @Override
     protected Collection<DeclarationDescriptor> computeAllDescriptors() {
         Collection<DeclarationDescriptor> result = super.computeAllDescriptors();
-        for (PsiClass nested : psiClass.getInnerClasses()) {
+        for (JavaClass nested : javaClass.getInnerClasses()) {
             ContainerUtil.addIfNotNull(result, getNamespace(Name.identifier(nested.getName())));
         }
         return result;

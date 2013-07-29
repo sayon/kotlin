@@ -27,9 +27,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
+import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -52,7 +51,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaCompileTimeConstResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserializer;
@@ -80,6 +78,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private JavaBridgeConfiguration javaBridgeConfiguration;
     private JavaDescriptorResolver javaDescriptorResolver;
     private PsiClassFinderImpl psiClassFinder;
+    private JavaClassFinderImpl javaClassFinder;
     private NamespaceFactoryImpl namespaceFactory;
     private DeclarationResolver declarationResolver;
     private AnnotationResolver annotationResolver;
@@ -131,6 +130,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.psiClassFinder = new PsiClassFinderImpl();
+        this.javaClassFinder = new JavaClassFinderImpl();
         this.namespaceFactory = new NamespaceFactoryImpl();
         this.declarationResolver = new DeclarationResolver();
         this.annotationResolver = new AnnotationResolver();
@@ -205,6 +205,8 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         psiClassFinder.setProject(project);
 
+        javaClassFinder.setPsiClassFinder(psiClassFinder);
+
         this.namespaceFactory.setModuleDescriptor(moduleDescriptor);
         this.namespaceFactory.setTrace(bindingTrace);
 
@@ -277,9 +279,9 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
         javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
+        javaClassResolver.setJavaClassFinder(javaClassFinder);
         javaClassResolver.setKotlinDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
-        javaClassResolver.setPsiClassFinder(psiClassFinder);
         javaClassResolver.setSignatureResolver(javaSignatureResolver);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
         javaClassResolver.setTrace(bindingTrace);
@@ -311,7 +313,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
         javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
-        javaNamespaceResolver.setPsiClassFinder(psiClassFinder);
+        javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
         javaNamespaceResolver.setTrace(bindingTrace);
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);
