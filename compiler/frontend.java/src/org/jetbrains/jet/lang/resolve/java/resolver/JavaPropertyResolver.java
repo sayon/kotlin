@@ -27,7 +27,10 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
+import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
@@ -214,7 +217,7 @@ public final class JavaPropertyResolver {
 
     @NotNull
     private JetType getPropertyType(@NotNull JavaField field, @NotNull TypeVariableResolver typeVariableResolver) {
-        JetType propertyType = typeTransformer.transformToType(field.getPsi().getType(), typeVariableResolver);
+        JetType propertyType = typeTransformer.transformToType(field.getType(), typeVariableResolver);
 
         boolean hasNotNullAnnotation = JavaAnnotationResolver.findAnnotationWithExternal(
                 field.getPsi(),

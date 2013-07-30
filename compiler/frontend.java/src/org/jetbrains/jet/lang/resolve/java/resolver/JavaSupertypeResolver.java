@@ -22,7 +22,10 @@ import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.TypeUsage;
+import org.jetbrains.jet.lang.resolve.java.TypeVariableResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -121,7 +124,7 @@ public final class JavaSupertypeResolver {
                 }
             }
 
-            JetType transformed = typeTransformer.transformToType(type.getPsi(), TypeUsage.SUPERTYPE, typeVariableResolver);
+            JetType transformed = typeTransformer.transformToType(type, TypeUsage.SUPERTYPE, typeVariableResolver);
             if (!ErrorUtils.isErrorType(transformed)) {
                 result.add(TypeUtils.makeNotNullable(transformed));
             }
