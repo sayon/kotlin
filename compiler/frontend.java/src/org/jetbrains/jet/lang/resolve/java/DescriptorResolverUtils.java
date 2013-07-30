@@ -22,10 +22,14 @@ import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMember;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -74,22 +78,6 @@ public final class DescriptorResolverUtils {
         return Collections.emptyList();
     }
 
-    public static Visibility resolveVisibility(@NotNull PsiModifierListOwner modifierListOwner) {
-        if (modifierListOwner.hasModifierProperty(PsiModifier.PUBLIC)) {
-            return Visibilities.PUBLIC;
-        }
-        if (modifierListOwner.hasModifierProperty(PsiModifier.PRIVATE)) {
-            return Visibilities.PRIVATE;
-        }
-        if (modifierListOwner.hasModifierProperty(PsiModifier.PROTECTED)) {
-            if (modifierListOwner.hasModifierProperty(PsiModifier.STATIC)) {
-                return JavaVisibilities.PROTECTED_STATIC_VISIBILITY;
-            }
-            return JavaVisibilities.PROTECTED_AND_PACKAGE;
-        }
-        return JavaVisibilities.PACKAGE_VISIBILITY;
-    }
-
     @Nullable
     public static ValueParameterDescriptor getValueParameterDescriptorForAnnotationParameter(
             Name argumentName,
@@ -126,11 +114,8 @@ public final class DescriptorResolverUtils {
                "valueOf(java.lang.String)".equals(signature);
     }
 
-    public static boolean isCorrectOwnerForEnumMember(
-            @NotNull ClassOrNamespaceDescriptor ownerDescriptor,
-            @NotNull PsiMember member
-    ) {
-        return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(member);
+    public static boolean isCorrectOwnerForEnumMember(@NotNull ClassOrNamespaceDescriptor ownerDescriptor, @NotNull JavaMember member) {
+        return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(member.getPsi());
     }
 
     @NotNull

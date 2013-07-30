@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiEnumConstant;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -31,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.jet.lang.resolve.java.provider.NamedMembers;
-import org.jetbrains.jet.lang.resolve.java.wrapper.PsiFieldWrapper;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -70,13 +69,13 @@ public final class JavaPropertyResolver {
     public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor ownerDescriptor) {
         Name propertyName = members.getName();
 
-        List<PsiFieldWrapper> fields = members.getFields();
+        List<JavaField> fields = members.getFields();
 
         Set<PropertyDescriptor> propertiesFromCurrent = new HashSet<PropertyDescriptor>(1);
         assert fields.size() <= 1;
         if (fields.size() == 1) {
-            PsiFieldWrapper field = fields.iterator().next();
-            if (DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, field.getPsiField())) {
+            JavaField field = fields.iterator().next();
+            if (DescriptorResolverUtils.isCorrectOwnerForEnumMember(ownerDescriptor, field)) {
                 propertiesFromCurrent.add(resolveProperty(ownerDescriptor, propertyName,
                                                           "class or namespace " + DescriptorUtils.getFQName(ownerDescriptor), field));
             }
@@ -128,14 +127,11 @@ public final class JavaPropertyResolver {
             @NotNull ClassOrNamespaceDescriptor owner,
             @NotNull Name propertyName,
             @NotNull String context,
-            @NotNull PsiFieldWrapper field
+            @NotNull JavaField field
     ) {
         boolean isVar = !field.isFinal();
 
-        Visibility visibility = DescriptorResolverUtils.resolveVisibility(field.getPsiField());
-
-        PropertyDescriptorImpl propertyDescriptor =
-                createPropertyDescriptor(owner, propertyName, field, isVar, visibility);
+        PropertyDescriptorImpl propertyDescriptor = createPropertyDescriptor(owner, propertyName, field, isVar);
 
         propertyDescriptor.initialize(null, null);
 
@@ -153,7 +149,7 @@ public final class JavaPropertyResolver {
                 DescriptorUtils.getExpectedThisObjectIfNeeded(owner),
                 (JetType) null
         );
-        trace.record(BindingContext.VARIABLE, field.getPsiField(), propertyDescriptor);
+        trace.record(BindingContext.VARIABLE, field.getPsi(), propertyDescriptor);
         trace.record(JavaBindingContext.IS_DECLARED_IN_JAVA, propertyDescriptor);
         return propertyDescriptor;
     }
@@ -162,12 +158,13 @@ public final class JavaPropertyResolver {
     private PropertyDescriptorImpl createPropertyDescriptor(
             @NotNull ClassOrNamespaceDescriptor owner,
             @NotNull Name propertyName,
-            @NotNull PsiFieldWrapper field,
-            boolean isVar,
-            @NotNull Visibility visibility
+            @NotNull JavaField field,
+            boolean isVar
     ) {
-        boolean isEnumEntry = field.getPsiField() instanceof PsiEnumConstant;
-        if (isEnumEntry) {
+        List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(field.getPsi());
+        Visibility visibility = field.getVisibility();
+
+        if (field.isEnumEntry()) {
             assert !isVar : "Enum entries should be immutable.";
             assert DescriptorUtils.isEnumClassObject(owner) : "Enum entries should be put into class object of enum only: " + owner;
             //TODO: this is a hack to indicate that this enum entry is an object
@@ -182,14 +179,14 @@ public final class JavaPropertyResolver {
                     false);
             return new PropertyDescriptorForObjectImpl(
                     owner,
-                    annotationResolver.resolveAnnotations(field.getPsiField()),
+                    annotations,
                     visibility,
                     propertyName,
                     dummyClassDescriptorForEnumEntryObject);
         }
         return new PropertyDescriptorImpl(
                 owner,
-                annotationResolver.resolveAnnotations(field.getPsiField()),
+                annotations,
                 Modality.FINAL,
                 visibility,
                 isVar,
@@ -200,9 +197,9 @@ public final class JavaPropertyResolver {
     @NotNull
     private JetType getAlternativeSignatureData(
             boolean isVar,
-            PsiFieldWrapper field,
-            PropertyDescriptor propertyDescriptor,
-            JetType propertyType
+            @NotNull JavaField field,
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JetType propertyType
     ) {
         AlternativeFieldSignatureData signatureData = new AlternativeFieldSignatureData(field, propertyType, isVar);
         if (signatureData.hasErrors()) {
@@ -216,11 +213,11 @@ public final class JavaPropertyResolver {
     }
 
     @NotNull
-    private JetType getPropertyType(@NotNull PsiFieldWrapper field, @NotNull TypeVariableResolver typeVariableResolver) {
-        JetType propertyType = typeTransformer.transformToType(field.getType(), typeVariableResolver);
+    private JetType getPropertyType(@NotNull JavaField field, @NotNull TypeVariableResolver typeVariableResolver) {
+        JetType propertyType = typeTransformer.transformToType(field.getPsi().getType(), typeVariableResolver);
 
         boolean hasNotNullAnnotation = JavaAnnotationResolver.findAnnotationWithExternal(
-                field.getPsiField(),
+                field.getPsi(),
                 JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
         ) != null;
 
@@ -243,7 +240,7 @@ public final class JavaPropertyResolver {
         return r;
     }
 
-    private static boolean isStaticFinalField(@NotNull PsiFieldWrapper wrapper) {
-        return wrapper.isFinal() && wrapper.isStatic();
+    private static boolean isStaticFinalField(@NotNull JavaField field) {
+        return field.isFinal() && field.isStatic();
     }
 }
