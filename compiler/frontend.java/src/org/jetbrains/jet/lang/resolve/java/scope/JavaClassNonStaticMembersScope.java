@@ -42,13 +42,13 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     public JavaClassNonStaticMembersScope(
             @NotNull ClassDescriptor descriptor,
             @NotNull JavaClass javaClass,
-            boolean staticMembersOfPsiClass,
+            boolean staticMembersOfClass,
             @NotNull JavaDescriptorResolver javaDescriptorResolver
     ) {
-        super(descriptor, MembersProvider.forClass(javaClass, staticMembersOfPsiClass), javaDescriptorResolver);
+        super(descriptor, MembersProvider.forClass(javaClass, staticMembersOfClass), javaDescriptorResolver);
         this.descriptor = descriptor;
         this.javaClass = javaClass;
-        this.staticMembersOfPsiClass = staticMembersOfPsiClass;
+        this.staticMembersOfPsiClass = staticMembersOfClass;
     }
 
 
@@ -97,11 +97,10 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
 
     @NotNull
     private ClassDescriptor resolveInnerClass(@NotNull JavaClass innerClass) {
-        String name = innerClass.getFqName();
-        assert name != null : "Inner class has no qualified name: " + innerClass;
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(new FqName(name),
-                                                                              DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-        assert classDescriptor != null : "Couldn't resolve inner class " + name;
+        FqName fqName = innerClass.getFqName();
+        assert fqName != null : "Inner class has no qualified name: " + innerClass;
+        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        assert classDescriptor != null : "Couldn't resolve inner class " + fqName;
         return classDescriptor;
     }
 }

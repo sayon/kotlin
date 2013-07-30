@@ -157,7 +157,7 @@ public final class JavaNamespaceResolver {
 
             JavaClass javaClass = findPackageClass(fqName);
             if (javaClass != null) {
-                PsiClass psiClass = javaClass.getPsiClass();
+                PsiClass psiClass = javaClass.getPsi();
                 boolean isCompiledKotlinPackageClass = DescriptorResolverUtils.isCompiledKotlinPackageClass(javaClass);
                 if (isOldKotlinPackageClass(javaClass) && !isCompiledKotlinPackageClass) {
                     // If psiClass has old annotations (@JetPackage) but doesn't have @KotlinPackage, report ABI version error
@@ -179,7 +179,7 @@ public final class JavaNamespaceResolver {
 
             // Otherwise (if psiClass is null or doesn't have a supported Kotlin annotation), it's a Java class and the package is empty
             if (record) {
-                trace.record(BindingContext.NAMESPACE, javaPackage.getPsiPackage(), namespaceDescriptor);
+                trace.record(BindingContext.NAMESPACE, javaPackage.getPsi(), namespaceDescriptor);
             }
 
             return new JavaPackageScope(namespaceDescriptor, javaPackage, fqName, javaDescriptorResolver);
@@ -193,7 +193,7 @@ public final class JavaNamespaceResolver {
         if (DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(javaClass)) {
             return null;
         }
-        PsiClass psiClass = javaClass.getPsiClass();
+        PsiClass psiClass = javaClass.getPsi();
         if (!hasStaticMembers(psiClass)) {
             return null;
         }
@@ -272,7 +272,7 @@ public final class JavaNamespaceResolver {
         List<Name> result = new ArrayList<Name>(classes.size());
         for (JavaClass javaClass : classes) {
             if (DescriptorResolverUtils.isCompiledKotlinClass(javaClass)) {
-                result.add(Name.identifier(javaClass.getName()));
+                result.add(javaClass.getName());
             }
         }
 
