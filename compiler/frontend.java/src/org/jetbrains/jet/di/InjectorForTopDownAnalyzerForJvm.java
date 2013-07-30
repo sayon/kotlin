@@ -27,7 +27,9 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
@@ -51,6 +53,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaCompileTimeConstResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserializer;
@@ -278,8 +281,8 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
-        javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaClassResolver.setJavaClassFinder(javaClassFinder);
+        javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaClassResolver.setKotlinDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
         javaClassResolver.setSignatureResolver(javaSignatureResolver);
@@ -300,7 +303,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
 
-        javaTypeTransformer.setResolver(javaDescriptorResolver);
+        javaTypeTransformer.setResolver(javaClassResolver);
 
         javaSignatureResolver.setTypeTransformer(javaTypeTransformer);
 
@@ -312,8 +315,8 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         annotationDescriptorDeserializer.setPsiClassFinder(psiClassFinder);
 
         javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
-        javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
+        javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaNamespaceResolver.setTrace(bindingTrace);
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);

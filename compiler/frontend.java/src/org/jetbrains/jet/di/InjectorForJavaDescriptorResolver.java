@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaCompileTimeConstResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.AnnotationDescriptorDeserializer;
@@ -94,8 +94,8 @@ public class InjectorForJavaDescriptorResolver {
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
-        javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaClassResolver.setJavaClassFinder(javaClassFinder);
+        javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaClassResolver.setKotlinDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
         javaClassResolver.setSignatureResolver(javaSignatureResolver);
@@ -116,7 +116,7 @@ public class InjectorForJavaDescriptorResolver {
 
         javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
 
-        javaTypeTransformer.setResolver(javaDescriptorResolver);
+        javaTypeTransformer.setResolver(javaClassResolver);
 
         javaSignatureResolver.setTypeTransformer(javaTypeTransformer);
 
@@ -128,8 +128,8 @@ public class InjectorForJavaDescriptorResolver {
         annotationDescriptorDeserializer.setPsiClassFinder(psiClassFinder);
 
         javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
-        javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
+        javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaNamespaceResolver.setTrace(bindingTrace);
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);
