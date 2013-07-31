@@ -303,7 +303,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
 
-        javaTypeTransformer.setResolver(javaClassResolver);
+        javaTypeTransformer.setClassResolver(javaClassResolver);
 
         javaSignatureResolver.setTypeTransformer(javaTypeTransformer);
 
