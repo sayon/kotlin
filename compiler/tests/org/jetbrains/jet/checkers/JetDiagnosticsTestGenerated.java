@@ -1253,6 +1253,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/controlStructures")
+        @InnerTestClasses({ControlStructures.If.class})
         public static class ControlStructures extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInControlStructures() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1318,6 +1319,25 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/controlStructures/when.kt234.kt973.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/controlStructures/if")
+            public static class If extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInIf() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/controlStructures/if"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("reportTypeMismatchDeeplyOnBranches.kt")
+                public void testReportTypeMismatchDeeplyOnBranches() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlStructures/if/reportTypeMismatchDeeplyOnBranches.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("ControlStructures");
+                suite.addTestSuite(ControlStructures.class);
+                suite.addTestSuite(If.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/dataClasses")
@@ -5193,7 +5213,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(Cast.class);
             suite.addTestSuite(CheckArguments.class);
             suite.addTestSuite(ControlFlowAnalysis.class);
-            suite.addTestSuite(ControlStructures.class);
+            suite.addTest(ControlStructures.innerSuite());
             suite.addTestSuite(DataClasses.class);
             suite.addTestSuite(DataFlow.class);
             suite.addTestSuite(DataFlowInfoTraversal.class);
