@@ -181,7 +181,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
             @Override
             public void visit(String name, Object value) {
                 ValueParameterDescriptor parameter =
-                        DescriptorResolverUtils.getValueParameterDescriptorForAnnotationParameter(Name.identifier(name), annotationClass);
+                        DescriptorResolverUtils.getAnnotationParameterByName(Name.identifier(name), annotationClass);
                 if (parameter != null) {
                     CompileTimeConstant<?> argument = JavaCompileTimeConstResolver.resolveCompileTimeConstantValue(value);
                     if (argument != null) {
