@@ -2686,6 +2686,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/inference/nestedCalls"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("arrayAccess.kt")
+                public void testArrayAccess() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/arrayAccess.kt");
+                }
+                
                 @TestMetadata("checkTypesForQualifiedProperties.kt")
                 public void testCheckTypesForQualifiedProperties() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/inference/nestedCalls/checkTypesForQualifiedProperties.kt");
