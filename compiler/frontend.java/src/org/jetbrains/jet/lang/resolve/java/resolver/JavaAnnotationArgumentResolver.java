@@ -37,12 +37,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public final class JavaCompileTimeConstResolver {
+public final class JavaAnnotationArgumentResolver {
     private JavaAnnotationResolver annotationResolver;
     private JavaClassResolver classResolver;
-
-    public JavaCompileTimeConstResolver() {
-    }
 
     @Inject
     public void setAnnotationResolver(JavaAnnotationResolver annotationResolver) {

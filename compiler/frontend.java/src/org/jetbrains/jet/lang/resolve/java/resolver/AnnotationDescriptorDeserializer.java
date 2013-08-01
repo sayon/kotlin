@@ -183,7 +183,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
                 ValueParameterDescriptor parameter =
                         DescriptorResolverUtils.getAnnotationParameterByName(Name.identifier(name), annotationClass);
                 if (parameter != null) {
-                    CompileTimeConstant<?> argument = JavaCompileTimeConstResolver.resolveCompileTimeConstantValue(value);
+                    CompileTimeConstant<?> argument = JavaAnnotationArgumentResolver.resolveCompileTimeConstantValue(value);
                     if (argument != null) {
                         annotation.setValueArgument(parameter, argument);
                     }
