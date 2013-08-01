@@ -26,8 +26,8 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifier;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -41,7 +41,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class JavaSupertypeResolver {
-    private static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
+    public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
 
     private BindingTrace trace;
     private JavaTypeTransformer typeTransformer;
@@ -115,7 +115,7 @@ public final class JavaSupertypeResolver {
     ) {
         List<JetType> result = new ArrayList<JetType>(supertypes.size());
         for (JavaClassifierType type : supertypes) {
-            JavaClassifier resolved = type.resolve();
+            JavaClassifier resolved = type.getClassifier();
             if (resolved != null) {
                 assert resolved instanceof JavaClass : "Supertype should be a class: " + resolved;
                 FqName fqName = ((JavaClass) resolved).getFqName();
