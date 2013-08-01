@@ -19,22 +19,19 @@ package org.jetbrains.jet.lang.resolve.java;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.resolver.*;
+import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
-import org.jetbrains.jet.lang.types.JetType;
 
 import javax.inject.Inject;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
-
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
     private JavaPropertyResolver propertiesResolver;
@@ -101,26 +98,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @NotNull
     public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor ownerDescriptor) {
         return propertiesResolver.resolveFieldGroup(members, ownerDescriptor);
-    }
-
-    public static class ValueParameterDescriptors {
-        private final JetType receiverType;
-        private final List<ValueParameterDescriptor> descriptors;
-
-        public ValueParameterDescriptors(@Nullable JetType receiverType, @NotNull List<ValueParameterDescriptor> descriptors) {
-            this.receiverType = receiverType;
-            this.descriptors = descriptors;
-        }
-
-        @Nullable
-        public JetType getReceiverType() {
-            return receiverType;
-        }
-
-        @NotNull
-        public List<ValueParameterDescriptor> getDescriptors() {
-            return descriptors;
-        }
     }
 
     @NotNull
