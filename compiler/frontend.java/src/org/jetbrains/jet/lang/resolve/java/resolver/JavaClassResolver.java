@@ -276,7 +276,7 @@ public final class JavaClassResolver {
         classDescriptor.setName(javaClass.getName());
 
         List<JavaSignatureResolver.TypeParameterDescriptorInitialization> typeParameterDescriptorInitializations
-                = JavaSignatureResolver.createUninitializedClassTypeParameters(javaClass, classDescriptor);
+                = JavaSignatureResolver.makeUninitializedTypeParameters(classDescriptor, javaClass.getTypeParameters());
 
         classDescriptor.setTypeParameterDescriptors(getTypeParametersDescriptors(typeParameterDescriptorInitializations));
         List<JetType> supertypes = Lists.newArrayList();
@@ -289,8 +289,7 @@ public final class JavaClassResolver {
         classDescriptor.setScopeForMemberLookup(scope);
         classDescriptor.setScopeForConstructorResolve(scope);
 
-        signatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classDescriptor,
-                                                   "class " + javaClass.getFqName());
+        signatureResolver.initializeTypeParameters(typeParameterDescriptorInitializations, classDescriptor);
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
         List<TypeParameterDescriptor> classTypeParameters = classDescriptor.getTypeConstructor().getParameters();

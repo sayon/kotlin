@@ -84,7 +84,7 @@ public final class JavaConstructorResolver {
         }
         else {
             for (JavaMethod constructor : constructors) {
-                ConstructorDescriptor descriptor = resolveConstructor(javaClass, constructor, containingClass);
+                ConstructorDescriptor descriptor = resolveConstructor(constructor, containingClass, javaClass.isStatic());
                 result.add(descriptor);
                 ContainerUtil.addIfNotNull(result, resolveSamAdapter(descriptor));
             }
@@ -122,8 +122,7 @@ public final class JavaConstructorResolver {
 
         List<ValueParameterDescriptor> valueParameters;
         if (isAnnotation) {
-            TypeVariableResolver typeVariableResolver =
-                    new TypeVariableResolver(typeParameters, containingClass, "class " + javaClass.getFqName());
+            TypeVariableResolver typeVariableResolver = new TypeVariableResolver(typeParameters, containingClass);
             valueParameters = resolveAnnotationParameters(javaClass, constructorDescriptor, typeVariableResolver);
         }
         else {
@@ -188,9 +187,9 @@ public final class JavaConstructorResolver {
 
     @NotNull
     private ConstructorDescriptor resolveConstructor(
-            @NotNull JavaClass javaClass,
             @NotNull JavaMethod constructor,
-            @NotNull ClassDescriptor classDescriptor
+            @NotNull ClassDescriptor classDescriptor,
+            boolean isStaticClass
     ) {
         ConstructorDescriptor alreadyResolved = trace.get(BindingContext.CONSTRUCTOR, constructor.getPsi());
         if (alreadyResolved != null) {
@@ -206,7 +205,7 @@ public final class JavaConstructorResolver {
 
         JavaDescriptorResolver.ValueParameterDescriptors valueParameterDescriptors = valueParameterResolver.resolveParameterDescriptors(
                 constructorDescriptor, constructor,
-                new TypeVariableResolver(typeParameters, classDescriptor, "constructor of class " + javaClass.getFqName())
+                new TypeVariableResolver(typeParameters, classDescriptor)
         );
 
         if (valueParameterDescriptors.getReceiverType() != null) {
@@ -227,7 +226,7 @@ public final class JavaConstructorResolver {
         constructorDescriptor.initialize(typeParameters,
                                          valueParameterDescriptors.getDescriptors(),
                                          constructor.getVisibility(),
-                                         javaClass.isStatic());
+                                         isStaticClass);
         trace.record(BindingContext.CONSTRUCTOR, constructor.getPsi(), constructorDescriptor);
         return constructorDescriptor;
     }
