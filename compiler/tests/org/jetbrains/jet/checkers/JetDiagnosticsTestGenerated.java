@@ -1253,7 +1253,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/controlStructures")
-        @InnerTestClasses({ControlStructures.If.class})
         public static class ControlStructures extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInControlStructures() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1319,25 +1318,6 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/controlStructures/when.kt234.kt973.kt");
             }
             
-            @TestMetadata("compiler/testData/diagnostics/tests/controlStructures/if")
-            public static class If extends AbstractDiagnosticsTestWithEagerResolve {
-                public void testAllFilesPresentInIf() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/controlStructures/if"), Pattern.compile("^(.+)\\.kt$"), true);
-                }
-                
-                @TestMetadata("reportTypeMismatchDeeplyOnBranches.kt")
-                public void testReportTypeMismatchDeeplyOnBranches() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/controlStructures/if/reportTypeMismatchDeeplyOnBranches.kt");
-                }
-                
-            }
-            
-            public static Test innerSuite() {
-                TestSuite suite = new TestSuite("ControlStructures");
-                suite.addTestSuite(ControlStructures.class);
-                suite.addTestSuite(If.class);
-                return suite;
-            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/dataClasses")
@@ -4578,7 +4558,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/resolve")
-        @InnerTestClasses({Resolve.Invoke.class})
+        @InnerTestClasses({Resolve.Invoke.class, Resolve.SpecialConstructions.class})
         public static class Resolve extends AbstractDiagnosticsTestWithEagerResolve {
             public void testAllFilesPresentInResolve() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4647,10 +4627,29 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/resolve/specialConstructions")
+            public static class SpecialConstructions extends AbstractDiagnosticsTestWithEagerResolve {
+                public void testAllFilesPresentInSpecialConstructions() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("compiler/testData/diagnostics/tests/resolve/specialConstructions"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("exclExclAsCall.kt")
+                public void testExclExclAsCall() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/specialConstructions/exclExclAsCall.kt");
+                }
+                
+                @TestMetadata("reportTypeMismatchDeeplyOnBranches.kt")
+                public void testReportTypeMismatchDeeplyOnBranches() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/resolve/specialConstructions/reportTypeMismatchDeeplyOnBranches.kt");
+                }
+                
+            }
+            
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("Resolve");
                 suite.addTestSuite(Resolve.class);
                 suite.addTestSuite(Invoke.class);
+                suite.addTestSuite(SpecialConstructions.class);
                 return suite;
             }
         }
@@ -5218,7 +5217,7 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             suite.addTestSuite(Cast.class);
             suite.addTestSuite(CheckArguments.class);
             suite.addTestSuite(ControlFlowAnalysis.class);
-            suite.addTest(ControlStructures.innerSuite());
+            suite.addTestSuite(ControlStructures.class);
             suite.addTestSuite(DataClasses.class);
             suite.addTestSuite(DataFlow.class);
             suite.addTestSuite(DataFlowInfoTraversal.class);
