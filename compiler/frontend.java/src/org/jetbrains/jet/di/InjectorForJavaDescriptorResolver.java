@@ -122,7 +122,6 @@ public class InjectorForJavaDescriptorResolver {
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
         javaFunctionResolver.setCache(traceBasedJavaResolverCache);
         javaFunctionResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-        javaFunctionResolver.setTrace(bindingTrace);
         javaFunctionResolver.setTypeParameterResolver(javaTypeParameterResolver);
         javaFunctionResolver.setTypeTransformer(javaTypeTransformer);
         javaFunctionResolver.setValueParameterResolver(javaValueParameterResolver);
@@ -158,7 +157,6 @@ public class InjectorForJavaDescriptorResolver {
         javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
         javaPropertyResolver.setCache(traceBasedJavaResolverCache);
         javaPropertyResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-        javaPropertyResolver.setTrace(bindingTrace);
         javaPropertyResolver.setTypeTransformer(javaTypeTransformer);
 
         psiClassFinder.initialize();

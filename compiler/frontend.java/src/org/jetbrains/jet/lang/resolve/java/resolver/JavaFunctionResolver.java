@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.TypeUsage;
@@ -55,7 +54,6 @@ public final class JavaFunctionResolver {
     private static final Logger LOG = Logger.getInstance(JavaFunctionResolver.class);
 
     private JavaTypeTransformer typeTransformer;
-    private BindingTrace trace;
     private JavaResolverCache cache;
     private JavaTypeParameterResolver typeParameterResolver;
     private JavaValueParameterResolver valueParameterResolver;
@@ -65,11 +63,6 @@ public final class JavaFunctionResolver {
     @Inject
     public void setTypeTransformer(JavaTypeTransformer typeTransformer) {
         this.typeTransformer = typeTransformer;
-    }
-
-    @Inject
-    public void setTrace(BindingTrace trace) {
-        this.trace = trace;
     }
 
     @Inject
@@ -259,7 +252,7 @@ public final class JavaFunctionResolver {
 
             Collection<SimpleFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(methodName, classDescriptor);
 
-            functions.addAll(resolveOverrides(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor, trace));
+            functions.addAll(resolveOverrides(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor));
         }
 
         if (isEnumClassObject(owner)) {

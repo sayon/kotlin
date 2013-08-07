@@ -309,7 +309,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
         javaFunctionResolver.setCache(traceBasedJavaResolverCache);
         javaFunctionResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-        javaFunctionResolver.setTrace(bindingTrace);
         javaFunctionResolver.setTypeParameterResolver(javaTypeParameterResolver);
         javaFunctionResolver.setTypeTransformer(javaTypeTransformer);
         javaFunctionResolver.setValueParameterResolver(javaValueParameterResolver);
@@ -345,7 +344,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
         javaPropertyResolver.setCache(traceBasedJavaResolverCache);
         javaPropertyResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
-        javaPropertyResolver.setTrace(bindingTrace);
         javaPropertyResolver.setTypeTransformer(javaTypeTransformer);
 
         psiClassFinder.initialize();

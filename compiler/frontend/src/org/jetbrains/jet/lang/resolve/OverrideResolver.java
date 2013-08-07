@@ -167,15 +167,15 @@ public class OverrideResolver {
     public static void resolveUnknownVisibilities(
             @NotNull Collection<? extends CallableMemberDescriptor> descriptors,
             @NotNull BindingTrace trace) {
-        for (CallableMemberDescriptor memberDescriptor : descriptors) {
-            JetDeclaration declaration = null;
-            if (memberDescriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
-                PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), memberDescriptor);
-                if (element instanceof JetDeclaration) {
-                    declaration = (JetDeclaration) element;
-                }
+        for (CallableMemberDescriptor descriptor : descriptors) {
+            JetDeclaration declaration;
+            if (descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+                declaration = (JetDeclaration) BindingContextUtils.callableDescriptorToDeclaration(trace.getBindingContext(), descriptor);
             }
-            resolveUnknownVisibilityForMember(declaration, memberDescriptor, trace);
+            else {
+                declaration = null;
+            }
+            resolveUnknownVisibilityForMember(declaration, descriptor, trace);
         }
     }
 
