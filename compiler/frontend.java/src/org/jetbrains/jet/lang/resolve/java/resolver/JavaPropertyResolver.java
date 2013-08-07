@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
@@ -43,6 +42,7 @@ import static org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils.resolv
 public final class JavaPropertyResolver {
     private JavaTypeTransformer typeTransformer;
     private BindingTrace trace;
+    private JavaResolverCache cache;
     private JavaAnnotationResolver annotationResolver;
     private ExternalSignatureResolver externalSignatureResolver;
 
@@ -57,6 +57,11 @@ public final class JavaPropertyResolver {
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
+    }
+
+    @Inject
+    public void setCache(JavaResolverCache cache) {
+        this.cache = cache;
     }
 
     @Inject
@@ -124,7 +129,7 @@ public final class JavaPropertyResolver {
                 (JetType) null
         );
 
-        trace.record(BindingContext.VARIABLE, field.getPsi(), propertyDescriptor);
+        cache.recordField(field, propertyDescriptor);
 
         return propertyDescriptor;
     }

@@ -62,6 +62,7 @@ public final class JavaNamespaceResolver {
 
     private JavaClassFinder javaClassFinder;
     private BindingTrace trace;
+    private JavaResolverCache cache;
     private JavaDescriptorResolver javaDescriptorResolver;
 
     private DeserializedDescriptorResolver deserializedDescriptorResolver;
@@ -74,6 +75,11 @@ public final class JavaNamespaceResolver {
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
+    }
+
+    @Inject
+    public void setCache(JavaResolverCache cache) {
+        this.cache = cache;
     }
 
     @Inject
@@ -149,7 +155,7 @@ public final class JavaNamespaceResolver {
     private JetScope doCreateNamespaceScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor namespaceDescriptor, boolean record) {
         JavaPackage javaPackage = javaClassFinder.findPackage(fqName);
         if (javaPackage != null) {
-            trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.PROPER);
+            cache.recordProperNamespace(namespaceDescriptor);
 
             JavaClass javaClass = findPackageClass(fqName);
             if (javaClass != null) {
@@ -175,7 +181,7 @@ public final class JavaNamespaceResolver {
 
             // Otherwise (if psiClass is null or doesn't have a supported Kotlin annotation), it's a Java class and the package is empty
             if (record) {
-                trace.record(BindingContext.NAMESPACE, javaPackage.getPsi(), namespaceDescriptor);
+                cache.recordPackage(javaPackage, namespaceDescriptor);
             }
 
             return new JavaPackageScope(namespaceDescriptor, javaPackage, fqName, javaDescriptorResolver);
@@ -193,10 +199,10 @@ public final class JavaNamespaceResolver {
             return null;
         }
 
-        trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, namespaceDescriptor, JavaNamespaceKind.CLASS_STATICS);
+        cache.recordClassStaticMembersNamespace(namespaceDescriptor);
 
         if (record) {
-            trace.record(BindingContext.NAMESPACE, javaClass.getPsi(), namespaceDescriptor);
+            cache.recordPackage(javaClass, namespaceDescriptor);
         }
 
         return new JavaClassStaticMembersScope(namespaceDescriptor, fqName, javaClass, javaDescriptorResolver);
