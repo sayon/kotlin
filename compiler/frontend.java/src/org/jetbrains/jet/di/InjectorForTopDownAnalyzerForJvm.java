@@ -338,7 +338,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);
-        javaSupertypeResolver.setTrace(bindingTrace);
         javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
         javaConstructorResolver.setCache(traceBasedJavaResolverCache);

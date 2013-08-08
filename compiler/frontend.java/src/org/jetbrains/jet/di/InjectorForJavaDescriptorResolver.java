@@ -151,7 +151,6 @@ public class InjectorForJavaDescriptorResolver {
         javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);
-        javaSupertypeResolver.setTrace(bindingTrace);
         javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
         javaConstructorResolver.setCache(traceBasedJavaResolverCache);
