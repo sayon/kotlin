@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
+import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporterProvider;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -86,6 +87,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private JavaClassFinderImpl javaClassFinder;
     private TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
     private TraceBasedJavaResolverCache traceBasedJavaResolverCache;
+    private TraceBasedErrorReporterProvider traceBasedErrorReporterProvider;
     private NamespaceFactoryImpl namespaceFactory;
     private DeclarationResolver declarationResolver;
     private AnnotationResolver annotationResolver;
@@ -140,6 +142,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.javaClassFinder = new JavaClassFinderImpl();
         this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
         this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
+        this.traceBasedErrorReporterProvider = new TraceBasedErrorReporterProvider();
         this.namespaceFactory = new NamespaceFactoryImpl();
         this.declarationResolver = new DeclarationResolver();
         this.annotationResolver = new AnnotationResolver();
@@ -220,6 +223,8 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         traceBasedJavaResolverCache.setTrace(bindingTrace);
 
+        traceBasedErrorReporterProvider.setTrace(bindingTrace);
+
         this.namespaceFactory.setModuleDescriptor(moduleDescriptor);
         this.namespaceFactory.setTrace(bindingTrace);
 
@@ -291,13 +296,13 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
         javaClassResolver.setCache(traceBasedJavaResolverCache);
+        javaClassResolver.setErrorReporterProvider(traceBasedErrorReporterProvider);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
         javaClassResolver.setJavaClassFinder(javaClassFinder);
         javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaClassResolver.setKotlinDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
-        javaClassResolver.setTrace(bindingTrace);
         javaClassResolver.setTypeParameterResolver(javaTypeParameterResolver);
 
         javaAnnotationResolver.setArgumentResolver(javaAnnotationArgumentResolver);
@@ -328,9 +333,9 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaNamespaceResolver.setCache(traceBasedJavaResolverCache);
         javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
+        javaNamespaceResolver.setErrorReporterProvider(traceBasedErrorReporterProvider);
         javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
         javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
-        javaNamespaceResolver.setTrace(bindingTrace);
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);
         javaSupertypeResolver.setTrace(bindingTrace);

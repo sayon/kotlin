@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.NamespaceDescriptorParent;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaNamespaceDescriptor;
@@ -60,8 +59,8 @@ public final class JavaNamespaceResolver {
     private final Set<FqName> unresolvedCache = Sets.newHashSet();
 
     private JavaClassFinder javaClassFinder;
-    private BindingTrace trace;
     private JavaResolverCache cache;
+    private ErrorReporterProvider errorReporterProvider;
     private JavaDescriptorResolver javaDescriptorResolver;
 
     private DeserializedDescriptorResolver deserializedDescriptorResolver;
@@ -72,13 +71,13 @@ public final class JavaNamespaceResolver {
     }
 
     @Inject
-    public void setTrace(BindingTrace trace) {
-        this.trace = trace;
+    public void setCache(JavaResolverCache cache) {
+        this.cache = cache;
     }
 
     @Inject
-    public void setCache(JavaResolverCache cache) {
-        this.cache = cache;
+    public void setErrorReporterProvider(ErrorReporterProvider errorReporterProvider) {
+        this.errorReporterProvider = errorReporterProvider;
     }
 
     @Inject
@@ -162,7 +161,7 @@ public final class JavaNamespaceResolver {
                 boolean isCompiledKotlinPackageClass = DescriptorResolverUtils.isCompiledKotlinPackageClass(psiClass);
                 if (isOldKotlinPackageClass(javaClass) && !isCompiledKotlinPackageClass) {
                     // If psiClass has old annotations (@JetPackage) but doesn't have @KotlinPackage, report ABI version error
-                    AbiVersionUtil.reportIncompatibleAbiVersion(psiClass, INVALID_VERSION, trace);
+                    errorReporterProvider.createForClass(javaClass).reportIncompatibleAbiVersion(INVALID_VERSION);
                 }
                 if (isCompiledKotlinPackageClass) {
                     // If psiClass has @KotlinPackage (regardless of whether it has @JetPackage or not), deserialize it to Kotlin descriptor.
@@ -170,7 +169,7 @@ public final class JavaNamespaceResolver {
                     VirtualFile file = psiClass.getContainingFile().getVirtualFile();
                     if (file != null) {
                         JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(namespaceDescriptor,
-                                file, DescriptorResolverUtils.createPsiBasedErrorReporter(psiClass, trace));
+                                file, errorReporterProvider.createForClass(javaClass));
                         if (kotlinPackageScope != null) {
                             return kotlinPackageScope;
                         }

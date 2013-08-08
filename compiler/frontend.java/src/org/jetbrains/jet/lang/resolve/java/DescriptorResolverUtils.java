@@ -24,10 +24,8 @@ import com.intellij.psi.util.PsiFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TraceUtil;
-import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMember;
@@ -134,16 +132,6 @@ public final class DescriptorResolverUtils {
 
     public static boolean isCorrectOwnerForEnumMember(@NotNull ClassOrNamespaceDescriptor ownerDescriptor, @NotNull JavaMember member) {
         return isEnumClassObject(ownerDescriptor) == shouldBeInEnumClassObject(member);
-    }
-
-    @NotNull
-    public static ErrorReporter createPsiBasedErrorReporter(@NotNull final PsiClass psiClass, @NotNull final BindingTrace trace) {
-        return new ErrorReporter() {
-            @Override
-            public void reportIncompatibleAbiVersion(int actualVersion) {
-                AbiVersionUtil.reportIncompatibleAbiVersion(psiClass, actualVersion, trace);
-            }
-        };
     }
 
     public static boolean isObjectMethodInInterface(@NotNull JavaMember member) {

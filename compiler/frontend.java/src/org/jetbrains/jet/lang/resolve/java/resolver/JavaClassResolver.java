@@ -26,10 +26,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
+import org.jetbrains.jet.lang.resolve.java.JavaClassFinder;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
@@ -79,8 +81,8 @@ public final class JavaClassResolver {
     @NotNull
     private final Set<FqNameBase> unresolvedCache = Sets.newHashSet();
 
-    private BindingTrace trace;
     private JavaResolverCache cache;
+    private ErrorReporterProvider errorReporterProvider;
     private JavaTypeParameterResolver typeParameterResolver;
     private JavaDescriptorResolver javaDescriptorResolver;
     private JavaAnnotationResolver annotationResolver;
@@ -94,13 +96,13 @@ public final class JavaClassResolver {
     }
 
     @Inject
-    public void setTrace(BindingTrace trace) {
-        this.trace = trace;
+    public void setCache(JavaResolverCache cache) {
+        this.cache = cache;
     }
 
     @Inject
-    public void setCache(JavaResolverCache cache) {
-        this.cache = cache;
+    public void setErrorReporterProvider(ErrorReporterProvider errorReporterProvider) {
+        this.errorReporterProvider = errorReporterProvider;
     }
 
     @Inject
@@ -251,8 +253,8 @@ public final class JavaClassResolver {
             ClassId id = ClassId.fromFqNameAndContainingDeclaration(fqName, containingDeclaration);
             VirtualFile file = getVirtualFile(id, outerClassFile);
             if (file != null) {
-                ClassDescriptor deserializedDescriptor = kotlinDescriptorResolver.resolveClass(id, file,
-                        DescriptorResolverUtils.createPsiBasedErrorReporter(javaClass.getPsi(), trace));
+                ClassDescriptor deserializedDescriptor =
+                        kotlinDescriptorResolver.resolveClass(id, file, errorReporterProvider.createForClass(javaClass));
 
                 if (deserializedDescriptor != null) {
                     //TODO: class object and psi class

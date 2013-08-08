@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
+import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporterProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
@@ -47,6 +48,7 @@ public class InjectorForJavaDescriptorResolver {
     private JavaClassFinderImpl javaClassFinder;
     private TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
     private TraceBasedJavaResolverCache traceBasedJavaResolverCache;
+    private TraceBasedErrorReporterProvider traceBasedErrorReporterProvider;
     private JavaDescriptorResolver javaDescriptorResolver;
     private PsiClassFinderImpl psiClassFinder;
     private JavaClassResolver javaClassResolver;
@@ -72,6 +74,7 @@ public class InjectorForJavaDescriptorResolver {
         this.javaClassFinder = new JavaClassFinderImpl();
         this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
         this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
+        this.traceBasedErrorReporterProvider = new TraceBasedErrorReporterProvider();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.psiClassFinder = new PsiClassFinderImpl();
         this.javaClassResolver = new JavaClassResolver();
@@ -94,6 +97,8 @@ public class InjectorForJavaDescriptorResolver {
 
         traceBasedJavaResolverCache.setTrace(bindingTrace);
 
+        traceBasedErrorReporterProvider.setTrace(bindingTrace);
+
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
         this.javaDescriptorResolver.setConstructorResolver(javaConstructorResolver);
         this.javaDescriptorResolver.setFunctionResolver(javaFunctionResolver);
@@ -104,13 +109,13 @@ public class InjectorForJavaDescriptorResolver {
 
         javaClassResolver.setAnnotationResolver(javaAnnotationResolver);
         javaClassResolver.setCache(traceBasedJavaResolverCache);
+        javaClassResolver.setErrorReporterProvider(traceBasedErrorReporterProvider);
         javaClassResolver.setFunctionResolver(javaFunctionResolver);
         javaClassResolver.setJavaClassFinder(javaClassFinder);
         javaClassResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         javaClassResolver.setKotlinDescriptorResolver(deserializedDescriptorResolver);
         javaClassResolver.setNamespaceResolver(javaNamespaceResolver);
         javaClassResolver.setSupertypesResolver(javaSupertypeResolver);
-        javaClassResolver.setTrace(bindingTrace);
         javaClassResolver.setTypeParameterResolver(javaTypeParameterResolver);
 
         javaAnnotationResolver.setArgumentResolver(javaAnnotationArgumentResolver);
@@ -141,9 +146,9 @@ public class InjectorForJavaDescriptorResolver {
 
         javaNamespaceResolver.setCache(traceBasedJavaResolverCache);
         javaNamespaceResolver.setDeserializedDescriptorResolver(deserializedDescriptorResolver);
+        javaNamespaceResolver.setErrorReporterProvider(traceBasedErrorReporterProvider);
         javaNamespaceResolver.setJavaClassFinder(javaClassFinder);
         javaNamespaceResolver.setJavaDescriptorResolver(javaDescriptorResolver);
-        javaNamespaceResolver.setTrace(bindingTrace);
 
         javaSupertypeResolver.setClassResolver(javaClassResolver);
         javaSupertypeResolver.setTrace(bindingTrace);
