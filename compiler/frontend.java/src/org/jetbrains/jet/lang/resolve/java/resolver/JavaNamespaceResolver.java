@@ -61,7 +61,7 @@ public final class JavaNamespaceResolver {
     private JavaClassFinder javaClassFinder;
     private JavaResolverCache cache;
     private ErrorReporterProvider errorReporterProvider;
-    private JavaDescriptorResolver javaDescriptorResolver;
+    private JavaMemberResolver memberResolver;
 
     private DeserializedDescriptorResolver deserializedDescriptorResolver;
 
@@ -81,8 +81,8 @@ public final class JavaNamespaceResolver {
     }
 
     @Inject
-    public void setJavaDescriptorResolver(@NotNull JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
+    public void setMemberResolver(@NotNull JavaMemberResolver memberResolver) {
+        this.memberResolver = memberResolver;
     }
 
     @Inject
@@ -182,7 +182,7 @@ public final class JavaNamespaceResolver {
                 cache.recordPackage(javaPackage, namespaceDescriptor);
             }
 
-            return new JavaPackageScope(namespaceDescriptor, javaPackage, fqName, javaDescriptorResolver);
+            return new JavaPackageScope(namespaceDescriptor, javaPackage, fqName, memberResolver);
         }
 
         JavaClass javaClass = javaClassFinder.findClass(fqName);
@@ -203,7 +203,7 @@ public final class JavaNamespaceResolver {
             cache.recordPackage(javaClass, namespaceDescriptor);
         }
 
-        return new JavaClassStaticMembersScope(namespaceDescriptor, fqName, javaClass, javaDescriptorResolver);
+        return new JavaClassStaticMembersScope(namespaceDescriptor, fqName, javaClass, memberResolver);
     }
 
     private static boolean isOldKotlinPackageClass(@NotNull JavaClass javaClass) {

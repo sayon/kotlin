@@ -18,32 +18,22 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.java.resolver.*;
-import org.jetbrains.jet.lang.resolve.java.scope.NamedMembers;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaNamespaceResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Set;
 
 public class JavaDescriptorResolver implements DependencyClassByQualifiedNameResolver {
     public static final Name JAVA_ROOT = Name.special("<java_root>");
 
-    private JavaPropertyResolver propertiesResolver;
     private JavaClassResolver classResolver;
-    private JavaConstructorResolver constructorResolver;
-    private JavaFunctionResolver functionResolver;
     private JavaNamespaceResolver namespaceResolver;
-
-    @Inject
-    public void setFunctionResolver(JavaFunctionResolver functionResolver) {
-        this.functionResolver = functionResolver;
-    }
 
     @Inject
     public void setClassResolver(JavaClassResolver classResolver) {
@@ -55,16 +45,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
         this.namespaceResolver = namespaceResolver;
     }
 
-    @Inject
-    public void setPropertiesResolver(JavaPropertyResolver propertiesResolver) {
-        this.propertiesResolver = propertiesResolver;
-    }
-
-    @Inject
-    public void setConstructorResolver(JavaConstructorResolver constructorResolver) {
-        this.constructorResolver = constructorResolver;
-    }
-
     @Nullable
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         return classResolver.resolveClass(qualifiedName, searchRule);
@@ -73,11 +53,6 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Override
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
         return classResolver.resolveClass(qualifiedName);
-    }
-
-    @NotNull
-    public Collection<ConstructorDescriptor> resolveConstructors(@NotNull JavaClass javaClass, @NotNull ClassDescriptor classDescriptor) {
-        return constructorResolver.resolveConstructors(javaClass, classDescriptor);
     }
 
     @Nullable
@@ -93,20 +68,5 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     @Nullable
     public JetScope getJavaPackageScope(@NotNull NamespaceDescriptor namespaceDescriptor) {
         return namespaceResolver.getJavaPackageScopeForExistingNamespaceDescriptor(namespaceDescriptor);
-    }
-
-    @NotNull
-    public Set<VariableDescriptor> resolveFieldGroup(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor ownerDescriptor) {
-        return propertiesResolver.resolveFieldGroup(members, ownerDescriptor);
-    }
-
-    @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroupForClass(@NotNull NamedMembers members, @NotNull ClassOrNamespaceDescriptor owner) {
-        return functionResolver.resolveFunctionGroupForClass(members, owner);
-    }
-
-    @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroupForPackage(@NotNull NamedMembers members, @NotNull NamespaceDescriptor owner) {
-        return functionResolver.resolveFunctionGroupForPackage(members, owner);
     }
 }

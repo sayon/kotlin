@@ -20,8 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.JavaMemberResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -43,9 +42,9 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
             @NotNull ClassDescriptor descriptor,
             @NotNull JavaClass javaClass,
             boolean staticMembersOfClass,
-            @NotNull JavaDescriptorResolver javaDescriptorResolver
+            @NotNull JavaMemberResolver memberResolver
     ) {
-        super(descriptor, MembersProvider.forClass(javaClass, staticMembersOfClass), javaDescriptorResolver);
+        super(descriptor, MembersProvider.forClass(javaClass, staticMembersOfClass), memberResolver);
         this.descriptor = descriptor;
         this.javaClass = javaClass;
         this.staticMembersOfPsiClass = staticMembersOfClass;
@@ -66,7 +65,7 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
 
     private void initConstructorsIfNeeded() {
         if (constructors == null) {
-            constructors = javaDescriptorResolver.resolveConstructors(javaClass, descriptor);
+            constructors = memberResolver.resolveConstructors(javaClass, descriptor);
 
             for (ConstructorDescriptor constructor : constructors) {
                 if (constructor.isPrimary()) {
@@ -99,7 +98,7 @@ public final class JavaClassNonStaticMembersScope extends JavaClassMembersScope 
     private ClassDescriptor resolveInnerClass(@NotNull JavaClass innerClass) {
         FqName fqName = innerClass.getFqName();
         assert fqName != null : "Inner class has no qualified name: " + innerClass;
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(fqName, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor classDescriptor = memberResolver.resolveClass(fqName);
         assert classDescriptor != null : "Couldn't resolve inner class " + fqName;
         return classDescriptor;
     }
