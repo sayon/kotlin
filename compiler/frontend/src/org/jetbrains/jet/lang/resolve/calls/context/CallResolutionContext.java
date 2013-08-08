@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArgument
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 
-public abstract class CallResolutionContext<Context extends CallResolutionContext> extends ResolutionContext<Context> {
+public abstract class CallResolutionContext<Context extends CallResolutionContext<Context>> extends ResolutionContext<Context> {
     public final Call call;
     public final CheckValueArgumentsMode checkArguments;
     public final MutableDataFlowInfoForArguments dataFlowInfoForArguments;
