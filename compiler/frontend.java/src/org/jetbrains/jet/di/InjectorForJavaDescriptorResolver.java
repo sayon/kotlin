@@ -19,13 +19,13 @@ package org.jetbrains.jet.di;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
+import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaClassResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationArgumentResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaFunctionResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.ExternalSignatureResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaValueParameterResolver;
@@ -44,13 +44,13 @@ public class InjectorForJavaDescriptorResolver {
     private final Project project;
     private final BindingTrace bindingTrace;
     private JavaClassFinderImpl javaClassFinder;
+    private TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
     private JavaDescriptorResolver javaDescriptorResolver;
     private PsiClassFinderImpl psiClassFinder;
     private JavaClassResolver javaClassResolver;
     private JavaAnnotationResolver javaAnnotationResolver;
     private JavaAnnotationArgumentResolver javaAnnotationArgumentResolver;
     private JavaFunctionResolver javaFunctionResolver;
-    private ExternalSignatureResolver externalSignatureResolver;
     private JavaTypeParameterResolver javaTypeParameterResolver;
     private JavaTypeTransformer javaTypeTransformer;
     private JavaValueParameterResolver javaValueParameterResolver;
@@ -68,13 +68,13 @@ public class InjectorForJavaDescriptorResolver {
         this.project = project;
         this.bindingTrace = bindingTrace;
         this.javaClassFinder = new JavaClassFinderImpl();
+        this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.psiClassFinder = new PsiClassFinderImpl();
         this.javaClassResolver = new JavaClassResolver();
         this.javaAnnotationResolver = new JavaAnnotationResolver();
         this.javaAnnotationArgumentResolver = new JavaAnnotationArgumentResolver();
         this.javaFunctionResolver = new JavaFunctionResolver();
-        this.externalSignatureResolver = new ExternalSignatureResolver();
         this.javaTypeParameterResolver = new JavaTypeParameterResolver();
         this.javaTypeTransformer = new JavaTypeTransformer();
         this.javaValueParameterResolver = new JavaValueParameterResolver();
@@ -86,6 +86,8 @@ public class InjectorForJavaDescriptorResolver {
         this.javaPropertyResolver = new JavaPropertyResolver();
 
         javaClassFinder.setPsiClassFinder(psiClassFinder);
+
+        traceBasedExternalSignatureResolver.setTrace(bindingTrace);
 
         this.javaDescriptorResolver.setClassResolver(javaClassResolver);
         this.javaDescriptorResolver.setConstructorResolver(javaConstructorResolver);
@@ -112,13 +114,11 @@ public class InjectorForJavaDescriptorResolver {
         javaAnnotationArgumentResolver.setClassResolver(javaClassResolver);
 
         javaFunctionResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaFunctionResolver.setExternalSignatureResolver(externalSignatureResolver);
+        javaFunctionResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
         javaFunctionResolver.setTrace(bindingTrace);
         javaFunctionResolver.setTypeParameterResolver(javaTypeParameterResolver);
         javaFunctionResolver.setTypeTransformer(javaTypeTransformer);
         javaFunctionResolver.setValueParameterResolver(javaValueParameterResolver);
-
-        externalSignatureResolver.setTrace(bindingTrace);
 
         javaTypeParameterResolver.setTypeTransformer(javaTypeTransformer);
 
@@ -142,13 +142,13 @@ public class InjectorForJavaDescriptorResolver {
         javaSupertypeResolver.setTrace(bindingTrace);
         javaSupertypeResolver.setTypeTransformer(javaTypeTransformer);
 
-        javaConstructorResolver.setExternalSignatureResolver(externalSignatureResolver);
+        javaConstructorResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
         javaConstructorResolver.setTrace(bindingTrace);
         javaConstructorResolver.setTypeTransformer(javaTypeTransformer);
         javaConstructorResolver.setValueParameterResolver(javaValueParameterResolver);
 
         javaPropertyResolver.setAnnotationResolver(javaAnnotationResolver);
-        javaPropertyResolver.setExternalSignatureResolver(externalSignatureResolver);
+        javaPropertyResolver.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
         javaPropertyResolver.setTrace(bindingTrace);
         javaPropertyResolver.setTypeTransformer(javaTypeTransformer);
 
