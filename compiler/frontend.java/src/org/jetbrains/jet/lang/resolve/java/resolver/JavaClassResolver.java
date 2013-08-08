@@ -28,6 +28,7 @@ import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
@@ -52,8 +53,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValueOfMethod;
-import static org.jetbrains.jet.lang.resolve.DescriptorResolver.createEnumClassObjectValuesMethod;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getClassObjectName;
 import static org.jetbrains.jet.lang.resolve.java.resolver.DeserializedResolverUtils.getVirtualFile;
 
@@ -456,11 +455,21 @@ public final class JavaClassResolver {
     }
 
     @NotNull
-    private ClassDescriptorFromJvmBytecode createClassObjectDescriptorForEnum(@NotNull ClassDescriptor containing, @NotNull JavaClass javaClass) {
+    private ClassDescriptorFromJvmBytecode createClassObjectDescriptorForEnum(
+            @NotNull ClassDescriptor containing,
+            @NotNull JavaClass javaClass
+    ) {
         ClassDescriptorFromJvmBytecode classObjectDescriptor = createSyntheticClassObject(containing, javaClass);
 
-        classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValuesMethod(classObjectDescriptor, trace));
-        classObjectDescriptor.getBuilder().addFunctionDescriptor(createEnumClassObjectValueOfMethod(classObjectDescriptor, trace));
+        JetType valuesReturnType = KotlinBuiltIns.getInstance().getArrayType(containing.getDefaultType());
+        SimpleFunctionDescriptor valuesMethod =
+                DescriptorResolver.createEnumClassObjectValuesMethod(classObjectDescriptor, valuesReturnType);
+        classObjectDescriptor.getBuilder().addFunctionDescriptor(valuesMethod);
+
+        JetType valueOfReturnType = containing.getDefaultType();
+        SimpleFunctionDescriptor valueOfMethod =
+                DescriptorResolver.createEnumClassObjectValueOfMethod(classObjectDescriptor, valueOfReturnType);
+        classObjectDescriptor.getBuilder().addFunctionDescriptor(valueOfMethod);
 
         return classObjectDescriptor;
     }
