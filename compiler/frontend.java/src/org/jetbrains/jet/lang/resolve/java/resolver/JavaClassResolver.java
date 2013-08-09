@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinder;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.descriptor.ClassDescriptorFromJvmBytecode;
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.scope.JavaClassNonStaticMembersScope;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
@@ -236,7 +235,9 @@ public final class JavaClassResolver {
     @NotNull
     private ClassDescriptor createJavaClassDescriptor(@NotNull FqName fqName, @NotNull JavaClass javaClass, @NotNull PostponedTasks taskList) {
         checkFqNamesAreConsistent(javaClass, fqName);
-        checkPsiClassIsNotJet(javaClass);
+
+        assert javaClass.getOriginKind() != JavaClass.OriginKind.KOTLIN_LIGHT_CLASS :
+                "Trying to resolve a light class as a regular PsiClass: " + javaClass.getFqName();
 
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(javaClass);
         // class may be resolved during resolution of parent
@@ -384,12 +385,6 @@ public final class JavaClassResolver {
         FqNameUnsafe correctedName = javaClassToKotlinFqName(fqName);
         if (classDescriptorCache.containsKey(correctedName) || unresolvedCache.contains(correctedName)) {
             throw new IllegalStateException("Cache already contains FQ name: " + fqName.asString());
-        }
-    }
-
-    private static void checkPsiClassIsNotJet(@NotNull JavaClass javaClass) {
-        if (javaClass.getPsi() instanceof JetJavaMirrorMarker) {
-            throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + javaClass.getFqName());
         }
     }
 
