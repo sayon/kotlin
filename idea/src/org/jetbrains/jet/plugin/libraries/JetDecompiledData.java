@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
 
 import java.util.Map;
 
@@ -78,7 +78,7 @@ public class JetDecompiledData {
     }
 
     public static boolean isKotlinFile(@NotNull ClsFileImpl clsFile) {
-        return DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(clsFile.getClasses()[0]);
+        return JavaResolverPsiUtils.isCompiledKotlinClassOrPackageClass(clsFile.getClasses()[0]);
     }
 
     @NotNull

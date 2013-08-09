@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java.resolver;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -157,8 +156,7 @@ public final class JavaNamespaceResolver {
 
             JavaClass javaClass = findPackageClass(fqName);
             if (javaClass != null) {
-                PsiClass psiClass = javaClass.getPsi();
-                boolean isCompiledKotlinPackageClass = DescriptorResolverUtils.isCompiledKotlinPackageClass(psiClass);
+                boolean isCompiledKotlinPackageClass = DescriptorResolverUtils.isCompiledKotlinPackageClass(javaClass);
                 if (isOldKotlinPackageClass(javaClass) && !isCompiledKotlinPackageClass) {
                     // If psiClass has old annotations (@JetPackage) but doesn't have @KotlinPackage, report ABI version error
                     errorReporterProvider.createForClass(javaClass).reportIncompatibleAbiVersion(INVALID_VERSION);
@@ -166,7 +164,7 @@ public final class JavaNamespaceResolver {
                 if (isCompiledKotlinPackageClass) {
                     // If psiClass has @KotlinPackage (regardless of whether it has @JetPackage or not), deserialize it to Kotlin descriptor.
                     // Note that @KotlinPackage may still have an old ABI version, in which case null is returned by createKotlinPackageScope
-                    VirtualFile file = psiClass.getContainingFile().getVirtualFile();
+                    VirtualFile file = javaClass.getPsi().getContainingFile().getVirtualFile();
                     if (file != null) {
                         JetScope kotlinPackageScope = deserializedDescriptorResolver.createKotlinPackageScope(namespaceDescriptor,
                                 file, errorReporterProvider.createForClass(javaClass));
@@ -190,7 +188,7 @@ public final class JavaNamespaceResolver {
             return null;
         }
 
-        if (DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(javaClass.getPsi())) {
+        if (DescriptorResolverUtils.isCompiledKotlinClassOrPackageClass(javaClass)) {
             return null;
         }
         if (!hasStaticMembers(javaClass)) {
@@ -208,7 +206,7 @@ public final class JavaNamespaceResolver {
 
     private static boolean isOldKotlinPackageClass(@NotNull JavaClass javaClass) {
         //noinspection deprecation
-        return DescriptorResolverUtils.hasAnnotation(javaClass, JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION.getFqName());
+        return javaClass.findAnnotation(JvmAnnotationNames.OLD_JET_PACKAGE_CLASS_ANNOTATION.getFqName().asString()) != null;
     }
 
     private void cache(@NotNull FqName fqName, @Nullable JetScope packageScope) {
@@ -276,7 +274,7 @@ public final class JavaNamespaceResolver {
         Collection<JavaClass> classes = DescriptorResolverUtils.filterDuplicateClasses(javaPackage.getClasses());
         List<Name> result = new ArrayList<Name>(classes.size());
         for (JavaClass javaClass : classes) {
-            if (DescriptorResolverUtils.isCompiledKotlinClass(javaClass.getPsi())) {
+            if (DescriptorResolverUtils.isCompiledKotlinClass(javaClass)) {
                 result.add(javaClass.getName());
             }
         }
