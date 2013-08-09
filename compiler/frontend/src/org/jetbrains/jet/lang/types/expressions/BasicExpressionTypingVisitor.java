@@ -743,7 +743,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // Type check the base expression
-        JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+        JetTypeInfo typeInfo = facade.getTypeInfo(
+                baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(ContextDependency.INDEPENDENT));
         JetType type = typeInfo.getType();
         if (type == null) {
             return typeInfo;
@@ -943,7 +944,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     OverloadResolutionResults<FunctionDescriptor> resolutionResults = resolveFakeCall(
                             contextWithDataFlow, receiver, OperatorConventions.EQUALS, KotlinBuiltIns.getInstance().getNullableAnyType());
 
-                    dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow).getDataFlowInfo();
+                    dataFlowInfo = facade.getTypeInfo(right, contextWithDataFlow.replaceContextDependency(ContextDependency.INDEPENDENT)).getDataFlowInfo();
 
                     if (resolutionResults.isSuccess()) {
                         FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
@@ -1134,7 +1135,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private JetType assignmentIsNotAnExpressionError(JetBinaryExpression expression, ExpressionTypingContext context) {
-        facade.checkStatementType(expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+        facade.checkStatementType(expression, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(ContextDependency.INDEPENDENT));
         context.trace.report(ASSIGNMENT_IN_EXPRESSION_CONTEXT.on(expression));
         return null;
     }
@@ -1156,7 +1157,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetExpression left = binaryExpression.getLeft();
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
         if (left != null) {
-            dataFlowInfo = facade.getTypeInfo(left, context).getDataFlowInfo();
+            dataFlowInfo = facade.getTypeInfo(left, context.replaceContextDependency(ContextDependency.INDEPENDENT)).getDataFlowInfo();
         }
         ExpressionTypingContext contextWithDataFlow = context.replaceDataFlowInfo(dataFlowInfo);
 
@@ -1212,7 +1213,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitStringTemplateExpression(JetStringTemplateExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        final ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE);
+        final ExpressionTypingContext context =
+                contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(ContextDependency.INDEPENDENT);
         final StringBuilder builder = new StringBuilder();
         final CompileTimeConstant<?>[] value = new CompileTimeConstant<?>[1];
         final DataFlowInfo[] dataFlowInfo = new DataFlowInfo[1];
@@ -1291,7 +1293,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetExpression arrayExpression = arrayAccessExpression.getArrayExpression();
         if (arrayExpression == null) return JetTypeInfo.create(null, oldContext.dataFlowInfo);
 
-        JetTypeInfo arrayTypeInfo = facade.getTypeInfo(arrayExpression, oldContext.replaceExpectedType(NO_EXPECTED_TYPE));
+        JetTypeInfo arrayTypeInfo = facade.getTypeInfo(arrayExpression, oldContext.replaceExpectedType(NO_EXPECTED_TYPE)
+                .replaceContextDependency(ContextDependency.INDEPENDENT));
         JetType arrayType = arrayTypeInfo.getType();
         if (arrayType == null) return arrayTypeInfo;
 

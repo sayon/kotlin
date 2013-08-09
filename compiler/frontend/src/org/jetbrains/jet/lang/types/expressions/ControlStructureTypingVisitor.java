@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -67,7 +68,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     private DataFlowInfo checkCondition(@NotNull JetScope scope, @Nullable JetExpression condition, ExpressionTypingContext context) {
         if (condition != null) {
             JetTypeInfo typeInfo = facade.getTypeInfo(condition, context.replaceScope(scope)
-                    .replaceExpectedType(KotlinBuiltIns.getInstance().getBooleanType()));
+                    .replaceExpectedType(KotlinBuiltIns.getInstance().getBooleanType()).replaceContextDependency(ContextDependency.INDEPENDENT));
             JetType conditionType = typeInfo.getType();
 
             if (conditionType != null && !isBoolean(conditionType)) {
@@ -190,7 +191,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitWhileExpression(JetWhileExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         if (!isStatement) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
 
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
+        ExpressionTypingContext context =
+                contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(ContextDependency.INDEPENDENT);
         JetExpression condition = expression.getCondition();
         DataFlowInfo dataFlowInfo = checkCondition(context.scope, condition, context);
 
@@ -253,7 +255,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitDoWhileExpression(JetDoWhileExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         if (!isStatement) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
 
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
+        ExpressionTypingContext context =
+                contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(ContextDependency.INDEPENDENT);
         JetExpression body = expression.getBody();
         JetScope conditionScope = context.scope;
         if (body instanceof JetFunctionLiteralExpression) {
@@ -302,7 +305,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitForExpression(JetForExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         if (!isStatement) return DataFlowUtils.illegalStatementType(expression, contextWithExpectedType, facade);
 
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
+        ExpressionTypingContext context =
+                contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(ContextDependency.INDEPENDENT);
         JetExpression loopRange = expression.getLoopRange();
         JetType expectedParameterType = null;
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
@@ -500,7 +504,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression thrownExpression = expression.getThrownExpression();
         if (thrownExpression != null) {
             JetType throwableType = KotlinBuiltIns.getInstance().getThrowable().getDefaultType();
-            facade.getTypeInfo(thrownExpression, context.replaceExpectedType(throwableType).replaceScope(context.scope));
+            facade.getTypeInfo(thrownExpression, context.replaceExpectedType(throwableType).replaceScope(context.scope).replaceContextDependency(
+                    ContextDependency.INDEPENDENT));
         }
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getNothingType(), expression, context, context.dataFlowInfo);
     }

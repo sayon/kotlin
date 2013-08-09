@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
+import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -44,7 +45,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitIsExpression(JetIsExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
+        ExpressionTypingContext context =
+                contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(ContextDependency.INDEPENDENT);
         JetExpression leftHandSide = expression.getLeftHandSide();
         JetTypeInfo typeInfo = facade.safeGetTypeInfo(leftHandSide, context.replaceScope(context.scope));
         JetType knownType = typeInfo.getType();
@@ -64,7 +66,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetTypeInfo visitWhenExpression(JetWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
-        ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
+        ExpressionTypingContext context =
+                contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(ContextDependency.INDEPENDENT);
         // TODO :change scope according to the bound value in the when header
         JetExpression subjectExpression = expression.getSubjectExpression();
 
