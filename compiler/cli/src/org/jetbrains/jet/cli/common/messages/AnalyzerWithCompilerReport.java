@@ -91,7 +91,6 @@ public final class AnalyzerWithCompilerReport {
         if (!diagnostic.isValid()) return false;
         DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumn(diagnostic);
         VirtualFile virtualFile = diagnostic.getPsiFile().getVirtualFile();
-        String path = virtualFile == null ? null : virtualFile.getPath();
         String render;
         if (diagnostic instanceof MyDiagnostic) {
             render = ((MyDiagnostic)diagnostic).message;
@@ -100,7 +99,7 @@ public final class AnalyzerWithCompilerReport {
             render = DefaultErrorMessages.RENDERER.render(diagnostic);
         }
         messageCollector.report(convertSeverity(diagnostic.getSeverity()), render,
-                CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn()));
+                MessageUtil.virtualFileToMessageLocation(virtualFile, lineAndColumn.getLine(), lineAndColumn.getColumn()));
         return diagnostic.getSeverity() == Severity.ERROR;
     }
 
