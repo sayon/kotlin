@@ -29,7 +29,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.JetJavaMirrorMarker;
-import org.jetbrains.jet.lang.resolve.java.resolver.JavaAnnotationResolver;
+import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -102,7 +102,7 @@ public class PsiClassFinderImpl implements PsiClassFinder {
         }
 
         if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
-            PsiAnnotation assertInvisibleAnnotation = JavaAnnotationResolver.findOwnAnnotation(
+            PsiAnnotation assertInvisibleAnnotation = PsiBasedExternalAnnotationResolver.findOwnAnnotation(
                     original, JvmAnnotationNames.ASSERT_INVISIBLE_IN_RESOLVER);
 
             if (assertInvisibleAnnotation != null) {

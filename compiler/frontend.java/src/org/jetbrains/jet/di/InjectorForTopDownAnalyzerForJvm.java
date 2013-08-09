@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureR
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporterProvider;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
+import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
@@ -91,6 +92,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private TraceBasedJavaResolverCache traceBasedJavaResolverCache;
     private TraceBasedErrorReporterProvider traceBasedErrorReporterProvider;
     private PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
+    private PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
     private NamespaceFactoryImpl namespaceFactory;
     private DeclarationResolver declarationResolver;
     private AnnotationResolver annotationResolver;
@@ -148,6 +150,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
         this.traceBasedErrorReporterProvider = new TraceBasedErrorReporterProvider();
         this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
+        this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.namespaceFactory = new NamespaceFactoryImpl();
         this.declarationResolver = new DeclarationResolver();
         this.annotationResolver = new AnnotationResolver();
@@ -222,12 +225,14 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaClassFinder.setPsiClassFinder(psiClassFinder);
 
+        traceBasedExternalSignatureResolver.setAnnotationResolver(javaAnnotationResolver);
         traceBasedExternalSignatureResolver.setTrace(bindingTrace);
 
         traceBasedJavaResolverCache.setTrace(bindingTrace);
 
         traceBasedErrorReporterProvider.setTrace(bindingTrace);
 
+        psiBasedMethodSignatureChecker.setAnnotationResolver(javaAnnotationResolver);
         psiBasedMethodSignatureChecker.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
 
         this.namespaceFactory.setModuleDescriptor(moduleDescriptor);
@@ -312,6 +317,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaAnnotationResolver.setArgumentResolver(javaAnnotationArgumentResolver);
         javaAnnotationResolver.setClassResolver(javaClassResolver);
+        javaAnnotationResolver.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
 
         javaAnnotationArgumentResolver.setAnnotationResolver(javaAnnotationResolver);
         javaAnnotationArgumentResolver.setClassResolver(javaClassResolver);
@@ -328,6 +334,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         javaTypeTransformer.setClassResolver(javaClassResolver);
 
+        javaValueParameterResolver.setAnnotationResolver(javaAnnotationResolver);
         javaValueParameterResolver.setTypeTransformer(javaTypeTransformer);
 
         deserializedDescriptorResolver.setAnnotationDeserializer(annotationDescriptorDeserializer);

@@ -37,10 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderImpl;
-import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
-import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporterProvider;
-import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedExternalSignatureResolver;
-import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
+import org.jetbrains.jet.lang.resolve.java.resolver.*;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
@@ -112,6 +109,7 @@ public class GenerateInjectors {
         generator.addField(TraceBasedJavaResolverCache.class);
         generator.addField(TraceBasedErrorReporterProvider.class);
         generator.addField(PsiBasedMethodSignatureChecker.class);
+        generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addPublicField(NamespaceFactoryImpl.class);
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm",
                            GenerateInjectors.class);
@@ -130,6 +128,7 @@ public class GenerateInjectors {
         generator.addField(TraceBasedJavaResolverCache.class);
         generator.addField(TraceBasedErrorReporterProvider.class);
         generator.addField(PsiBasedMethodSignatureChecker.class);
+        generator.addField(PsiBasedExternalAnnotationResolver.class);
         generator.addPublicField(JavaDescriptorResolver.class);
         generator.addPublicField(PsiClassFinderImpl.class);
 
