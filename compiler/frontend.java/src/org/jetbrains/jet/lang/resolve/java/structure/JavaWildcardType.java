@@ -41,4 +41,9 @@ public class JavaWildcardType extends JavaType {
     public boolean isExtends() {
         return getPsi().isExtends();
     }
+
+    @NotNull
+    public JavaElementFactory getFactory() {
+        return new JavaElementFactory(getPsi().getManager());
+    }
 }

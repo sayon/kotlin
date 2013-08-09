@@ -16,13 +16,20 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
-public interface JavaElement {
-    @NotNull
-    PsiElement getPsi();
+public class JavaElementFactory {
+    private final PsiManager manager;
+
+    public JavaElementFactory(@NotNull PsiManager manager) {
+        this.manager = manager;
+    }
 
     @NotNull
-    JavaElementFactory getFactory();
+    public JavaType createJavaLangObjectType() {
+        return JavaType.create(PsiType.getJavaLangObject(manager, GlobalSearchScope.allScope(manager.getProject())));
+    }
 }

@@ -32,6 +32,12 @@ public abstract class JavaElementImpl implements JavaElement {
         return psiElement;
     }
 
+    @NotNull
+    @Override
+    public JavaElementFactory getFactory() {
+        return new JavaElementFactory(psiElement.getManager());
+    }
+
     @Override
     public int hashCode() {
         return getPsi().hashCode();
