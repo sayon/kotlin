@@ -57,6 +57,7 @@ public abstract class DeclarationsCacheProvider {
     private static class CancelableResolveSessionValueProvider implements CachedValueProvider<CancelableResolveSession> {
         private final Project project;
         private final TargetPlatform platform;
+        private volatile boolean computationConcurrentCheck = false;
 
         private CancelableResolveSessionValueProvider(Project project, TargetPlatform platform) {
             this.project = project;
@@ -66,11 +67,20 @@ public abstract class DeclarationsCacheProvider {
         @Nullable
         @Override
         public synchronized Result<CancelableResolveSession> compute() {
-            System.out.println("Recreate for project: " + project.hashCode() + " " + platform);
+            assert !computationConcurrentCheck;
 
-            Collection<JetFile> files = JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project));
-            ResolveSession resolveSession = AnalyzerFacadeProvider.getAnalyzerFacade(platform).getLazyResolveSession(project, files);
-            return Result.create(new CancelableResolveSession(project, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+            try {
+                computationConcurrentCheck = true;
+
+                System.out.println("Recreate for project: " + project.hashCode() + " " + platform);
+
+                Collection<JetFile> files = JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project));
+                ResolveSession resolveSession = AnalyzerFacadeProvider.getAnalyzerFacade(platform).getLazyResolveSession(project, files);
+                return Result.create(new CancelableResolveSession(project, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+            }
+            finally {
+                computationConcurrentCheck = false;
+            }
         }
     }
 }

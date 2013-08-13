@@ -17,6 +17,7 @@
 package org.jetbrains.jet.completion.handlers;
 
 import com.intellij.codeInsight.completion.LightCompletionTestCase;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -69,6 +70,7 @@ public class KeywordsHandlerTest extends LightCompletionTestCase {
         }
     }
 
+    @NotNull
     @Override
     protected String getTestDataPath() {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/handlers/keywords").getPath() +
