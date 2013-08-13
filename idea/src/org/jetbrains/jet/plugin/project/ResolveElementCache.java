@@ -22,6 +22,7 @@ import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +57,7 @@ public class ResolveElementCache {
     private final CachedValue<MemoizedFunctionToNotNull<JetElement, BindingContext>> additionalResolveCache;
     private final ResolveSession resolveSession;
 
-    public ResolveElementCache(ResolveSession resolveSession, Project project) {
+    public ResolveElementCache(final ResolveSession resolveSession, final Project project) {
         this.resolveSession = resolveSession;
 
         // Recreate internal cache after change of modification count
@@ -65,11 +66,13 @@ public class ResolveElementCache {
                             @Nullable
                             @Override
                             public Result<MemoizedFunctionToNotNull<JetElement, BindingContext>> compute() {
+                                System.out.println("Recreate function: " + PsiManager.getInstance(project).getModificationTracker().getModificationCount());
                                 StorageManager manager = ResolveElementCache.this.resolveSession.getStorageManager();
                                 MemoizedFunctionToNotNull<JetElement, BindingContext> elementsCacheFunction =
                                         manager.createMemoizedFunction(new com.intellij.util.Function<JetElement, BindingContext>() {
                                             @Override
                                             public BindingContext fun(JetElement jetElement) {
+                                                System.out.println("Request for: " + jetElement);
                                                 return elementAdditionalResolve(jetElement);
                                             }
                                         }, StorageManager.ReferenceKind.WEAK);

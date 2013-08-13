@@ -66,6 +66,8 @@ public abstract class DeclarationsCacheProvider {
         @Nullable
         @Override
         public synchronized Result<CancelableResolveSession> compute() {
+            System.out.println("Recreate for project: " + project.hashCode() + " " + platform);
+
             Collection<JetFile> files = JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project));
             ResolveSession resolveSession = AnalyzerFacadeProvider.getAnalyzerFacade(platform).getLazyResolveSession(project, files);
             return Result.create(new CancelableResolveSession(project, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);

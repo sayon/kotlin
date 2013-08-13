@@ -148,6 +148,7 @@ public class CancelableResolveSession implements KotlinCodeAnalyzer, Modificatio
             return computable.compute();
         }
         catch (ProcessCanceledException canceledException) {
+            System.out.println("Canceled: " + this);
             canceledTracker.getAndIncrement();
             throw canceledException;
         }

@@ -183,6 +183,9 @@ public final class AnalyzerFacadeWithCache {
 
         @Override
         public CachedValueProvider.Result<CancelableResolveSession> compute(@NotNull JetFile file) {
+            System.out.println("Recreate for file: " + file.getName() + " " + file.hashCode() + " " +
+                               PsiManager.getInstance(file.getProject()).getModificationTracker().getOutOfCodeBlockModificationCount());
+
             Project project = file.getProject();
             Collection<JetFile> files = JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project));
 
