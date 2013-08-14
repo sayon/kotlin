@@ -97,7 +97,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         return settings;
     }
 
-    @Override
+    //@Override
     protected RunnerAndConfigurationSettings findExistingByElement(
             Location location,
             @NotNull RunnerAndConfigurationSettings[] existingConfigurations,
