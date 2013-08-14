@@ -1,0 +1,3 @@
+Unclassified usage (15: 12) open class B: A() {
+Unclassified usage (19: 12) open class C: Y {
+Unclassified usage (7: 12) open class A: X {

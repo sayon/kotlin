@@ -1,0 +1,1 @@
+Unclassified usage (11: 7) trait Y: X {

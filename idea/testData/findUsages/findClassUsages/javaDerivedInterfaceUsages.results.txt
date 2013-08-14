@@ -1,0 +1,1 @@
+Unclassified usage (5: 11) interface Y extends X {
