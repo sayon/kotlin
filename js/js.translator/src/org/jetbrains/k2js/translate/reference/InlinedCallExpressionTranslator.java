@@ -149,14 +149,9 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
     @NotNull
     private JsExpression translateArgument(@NotNull ValueParameterDescriptor parameterDescriptor,
                                            @NotNull ResolvedValueArgument actualArgument) {
-        List<JsExpression> translatedSingleArgument = translateSingleArgument(actualArgument, parameterDescriptor);
+        List<JsExpression> translatedSingleArgument = CallArgumentTranslator.translateSingleArgument(context(), actualArgument, parameterDescriptor, true);
         assert translatedSingleArgument.size() == 1 : "We always wrap varargs in kotlin calls.";
         return translatedSingleArgument.get(0);
-    }
-
-    @Override
-    public boolean shouldWrapVarargInArray() {
-        return true;
     }
 
     private static final class InlineFunctionMutator implements Mutator {

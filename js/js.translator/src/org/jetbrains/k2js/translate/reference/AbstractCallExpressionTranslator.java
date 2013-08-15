@@ -16,24 +16,14 @@
 
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.common.collect.Lists;
-import com.google.dart.compiler.backend.js.ast.JsArrayLiteral;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.ValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.*;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.general.Translation;
 
-import java.util.Collections;
-import java.util.List;
-
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getDefaultArgument;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCallForCallExpression;
 
 public abstract class AbstractCallExpressionTranslator extends AbstractTranslator {
@@ -57,42 +47,4 @@ public abstract class AbstractCallExpressionTranslator extends AbstractTranslato
         this.callType = type;
     }
 
-    protected abstract boolean shouldWrapVarargInArray();
-
-    @NotNull
-    protected List<JsExpression> translateSingleArgument(@NotNull ResolvedValueArgument actualArgument,
-            @NotNull ValueParameterDescriptor parameterDescriptor) {
-        List<ValueArgument> valueArguments = actualArgument.getArguments();
-        if (actualArgument instanceof VarargValueArgument) {
-            return translateVarargArgument(valueArguments);
-        }
-        if (actualArgument instanceof DefaultValueArgument) {
-            JetExpression defaultArgument = getDefaultArgument(bindingContext(), parameterDescriptor);
-            return Collections.singletonList(Translation.translateAsExpression(defaultArgument, context()));
-        }
-        assert actualArgument instanceof ExpressionValueArgument;
-        assert valueArguments.size() == 1;
-        JetExpression argumentExpression = valueArguments.get(0).getArgumentExpression();
-        assert argumentExpression != null;
-        return Collections.singletonList(Translation.translateAsExpression(argumentExpression, context()));
-    }
-
-    @NotNull
-    private List<JsExpression> translateVarargArgument(@NotNull List<ValueArgument> arguments) {
-        List<JsExpression> translatedArgs = Lists.newArrayList();
-        for (ValueArgument argument : arguments) {
-            JetExpression argumentExpression = argument.getArgumentExpression();
-            assert argumentExpression != null;
-            translatedArgs.add(Translation.translateAsExpression(argumentExpression, context()));
-        }
-        if (shouldWrapVarargInArray()) {
-            return wrapInArrayLiteral(translatedArgs);
-        }
-        return translatedArgs;
-    }
-
-    @NotNull
-    private static List<JsExpression> wrapInArrayLiteral(@NotNull List<JsExpression> translatedArgs) {
-        return Collections.<JsExpression>singletonList(new JsArrayLiteral(translatedArgs));
-    }
 }
