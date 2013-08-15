@@ -20,6 +20,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
@@ -945,5 +946,49 @@ public class JetPsiUtil {
             return element.getParent();
         }
         return element;
+    }
+
+    public static String elementWithContextText(@NotNull JetElement element) {
+        String fileText = element.getContainingFile().getText();
+
+        if (element instanceof JetFile) {
+            return fileText;
+        }
+
+        PsiElement inFileParent = PsiTreeUtil.findFirstParent(element, new Condition<PsiElement>() {
+            @Override
+            public boolean value(PsiElement parentCandidate) {
+                return parentCandidate != null && parentCandidate.getParent() instanceof JetFile;
+            }
+        });
+
+        assert inFileParent != null;
+        int startContextOffset = inFileParent.getTextRange().getStartOffset();
+
+        PsiElement endOfContext = element;
+
+        // Try to extend context to parent element or gran-parent node, but avoid extending to all file
+        PsiElement parent = element.getParent();
+        assert parent != null;
+        if (!(parent instanceof JetFile)) {
+            endOfContext = parent;
+
+            PsiElement grandParent = parent.getParent();
+            if (grandParent != null && !(grandParent instanceof JetFile) && grandParent != inFileParent) {
+                endOfContext = grandParent;
+            }
+        }
+
+        PsiElement nextAfterContext = PsiTreeUtil.nextLeaf(endOfContext);
+        int endContextOffset = nextAfterContext != null && nextAfterContext != element ? nextAfterContext.getTextRange().getStartOffset(): fileText.length();
+
+        String elementMarker = "<caret>";
+        String context = new StringBuffer(fileText)
+                .insert(element.getTextOffset(), elementMarker)
+                .substring(startContextOffset, endContextOffset + elementMarker.length());
+
+        return new StringBuffer(context)
+                .insert(0, startContextOffset != 0 ? "..." : "")
+                .append(endContextOffset != fileText.length() ? "..." : "").toString();
     }
 }
