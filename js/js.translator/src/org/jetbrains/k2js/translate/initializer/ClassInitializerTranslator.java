@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -27,11 +28,14 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.reference.CallArgumentTranslator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +46,6 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getQualifiedReference;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateArgumentList;
 
 public final class ClassInitializerTranslator extends AbstractTranslator {
     @NotNull
@@ -118,17 +121,19 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             JsInvocation call = new JsInvocation(new JsNameRef("call", new JsNameRef("baseInitializer", ref.makeRef())));
             call.getArguments().add(JsLiteral.THIS);
             call.getArguments().addAll(arguments);
-            initializerStatements.add(call.makeStmt());
+            initializerStatements.add(0, call.makeStmt());
         }
         else {
             JsName superMethodName = context().scope().declareName(Namer.superMethodName());
-            initializerStatements.add(convertToStatement(new JsInvocation(new JsNameRef(superMethodName, JsLiteral.THIS), arguments)));
+            initializerStatements.add(0, convertToStatement(new JsInvocation(new JsNameRef(superMethodName, JsLiteral.THIS), arguments)));
         }
     }
 
     @NotNull
     private List<JsExpression> translateArguments(@NotNull JetDelegatorToSuperCall superCall) {
-        return translateArgumentList(context(), superCall.getValueArguments());
+        ResolvedCall<? extends CallableDescriptor> call = context().bindingContext().get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
+        assert call != null : "ResolvedCall for superCall must be not null";
+        return CallArgumentTranslator.getArgumentTranslator(call, null, context()).getTranslateArguments();
     }
 
     @Nullable
