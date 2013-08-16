@@ -738,119 +738,119 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @TestMetadata("idea/testData/quickfix/modifiers")
     @InnerTestClasses({Modifiers.AddOpenToClassDeclaration.class})
     public static class Modifiers extends AbstractQuickFixTest {
-        @TestMetadata("beforeAddInnerModifier.kt")
-        public void testAddInnerModifier() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeAddInnerModifier.kt");
-        }
+        //@TestMetadata("beforeAddInnerModifier.kt")
+        //public void testAddInnerModifier() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeAddInnerModifier.kt");
+        //}
         
-        public void testAllFilesPresentInModifiers() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers"), Pattern.compile("^before(\\w+)\\.kt$"), true);
-        }
+        //public void testAllFilesPresentInModifiers() throws Exception {
+        //    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.GenerateTests", new File("idea/testData/quickfix/modifiers"), Pattern.compile("^before(\\w+)\\.kt$"), true);
+        //}
         
         @TestMetadata("beforeCannotMakeClassAnnotation.kt")
         public void testCannotMakeClassAnnotation() throws Exception {
             doTest("idea/testData/quickfix/modifiers/beforeCannotMakeClassAnnotation.kt");
         }
         
-        @TestMetadata("beforeFinalTrait.kt")
-        public void testFinalTrait() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeFinalTrait.kt");
-        }
-        
-        @TestMetadata("beforeIllegalEnumAnnotation1.kt")
-        public void testIllegalEnumAnnotation1() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeIllegalEnumAnnotation1.kt");
-        }
-        
-        @TestMetadata("beforeIllegalEnumAnnotation2.kt")
-        public void testIllegalEnumAnnotation2() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeIllegalEnumAnnotation2.kt");
-        }
-        
-        @TestMetadata("beforeNestedClassNotAllowed.kt")
-        public void testNestedClassNotAllowed() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeNestedClassNotAllowed.kt");
-        }
-        
-        @TestMetadata("beforeNotAnAnnotationClass.kt")
-        public void testNotAnAnnotationClass() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeNotAnAnnotationClass.kt");
-        }
-        
-        @TestMetadata("beforeOpenMemberInFinalClass1.kt")
-        public void testOpenMemberInFinalClass1() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeOpenMemberInFinalClass1.kt");
-        }
-        
-        @TestMetadata("beforeOpenMemberInFinalClass2.kt")
-        public void testOpenMemberInFinalClass2() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeOpenMemberInFinalClass2.kt");
-        }
-        
-        @TestMetadata("beforeOpenModifierInEnum.kt")
-        public void testOpenModifierInEnum() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeOpenModifierInEnum.kt");
-        }
-        
-        @TestMetadata("beforePackageMemberCannotBeProtected.kt")
-        public void testPackageMemberCannotBeProtected() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforePackageMemberCannotBeProtected.kt");
-        }
-        
-        @TestMetadata("beforeRemoveIncompatibleModifier.kt")
-        public void testRemoveIncompatibleModifier() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeRemoveIncompatibleModifier.kt");
-        }
-        
-        @TestMetadata("beforeRemoveRedundantModifier1.kt")
-        public void testRemoveRedundantModifier1() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeRemoveRedundantModifier1.kt");
-        }
-        
-        @TestMetadata("beforeRemoveRedundantModifier2.kt")
-        public void testRemoveRedundantModifier2() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeRemoveRedundantModifier2.kt");
-        }
-        
-        @TestMetadata("beforeRemoveRedundantModifier3.kt")
-        public void testRemoveRedundantModifier3() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeRemoveRedundantModifier3.kt");
-        }
-        
-        @TestMetadata("beforeRemoveSupertype1.kt")
-        public void testRemoveSupertype1() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeRemoveSupertype1.kt");
-        }
-        
-        @TestMetadata("beforeRemoveSupertype2.kt")
-        public void testRemoveSupertype2() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeRemoveSupertype2.kt");
-        }
-        
-        @TestMetadata("beforeRemoveSupertype3.kt")
-        public void testRemoveSupertype3() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeRemoveSupertype3.kt");
-        }
-        
-        @TestMetadata("beforeRemoveSupertype4.kt")
-        public void testRemoveSupertype4() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeRemoveSupertype4.kt");
-        }
-        
-        @TestMetadata("beforeVisibilityModifer1.kt")
-        public void testVisibilityModifer1() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeVisibilityModifer1.kt");
-        }
-        
-        @TestMetadata("beforeVisibilityModifer2.kt")
-        public void testVisibilityModifer2() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeVisibilityModifer2.kt");
-        }
-        
-        @TestMetadata("beforeVisibilityModiferParameter.kt")
-        public void testVisibilityModiferParameter() throws Exception {
-            doTest("idea/testData/quickfix/modifiers/beforeVisibilityModiferParameter.kt");
-        }
+        //@TestMetadata("beforeFinalTrait.kt")
+        //public void testFinalTrait() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeFinalTrait.kt");
+        //}
+        //
+        //@TestMetadata("beforeIllegalEnumAnnotation1.kt")
+        //public void testIllegalEnumAnnotation1() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeIllegalEnumAnnotation1.kt");
+        //}
+        //
+        //@TestMetadata("beforeIllegalEnumAnnotation2.kt")
+        //public void testIllegalEnumAnnotation2() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeIllegalEnumAnnotation2.kt");
+        //}
+        //
+        //@TestMetadata("beforeNestedClassNotAllowed.kt")
+        //public void testNestedClassNotAllowed() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeNestedClassNotAllowed.kt");
+        //}
+        //
+        //@TestMetadata("beforeNotAnAnnotationClass.kt")
+        //public void testNotAnAnnotationClass() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeNotAnAnnotationClass.kt");
+        //}
+        //
+        //@TestMetadata("beforeOpenMemberInFinalClass1.kt")
+        //public void testOpenMemberInFinalClass1() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeOpenMemberInFinalClass1.kt");
+        //}
+        //
+        //@TestMetadata("beforeOpenMemberInFinalClass2.kt")
+        //public void testOpenMemberInFinalClass2() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeOpenMemberInFinalClass2.kt");
+        //}
+        //
+        //@TestMetadata("beforeOpenModifierInEnum.kt")
+        //public void testOpenModifierInEnum() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeOpenModifierInEnum.kt");
+        //}
+        //
+        //@TestMetadata("beforePackageMemberCannotBeProtected.kt")
+        //public void testPackageMemberCannotBeProtected() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforePackageMemberCannotBeProtected.kt");
+        //}
+        //
+        //@TestMetadata("beforeRemoveIncompatibleModifier.kt")
+        //public void testRemoveIncompatibleModifier() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeRemoveIncompatibleModifier.kt");
+        //}
+        //
+        //@TestMetadata("beforeRemoveRedundantModifier1.kt")
+        //public void testRemoveRedundantModifier1() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeRemoveRedundantModifier1.kt");
+        //}
+        //
+        //@TestMetadata("beforeRemoveRedundantModifier2.kt")
+        //public void testRemoveRedundantModifier2() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeRemoveRedundantModifier2.kt");
+        //}
+        //
+        //@TestMetadata("beforeRemoveRedundantModifier3.kt")
+        //public void testRemoveRedundantModifier3() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeRemoveRedundantModifier3.kt");
+        //}
+        //
+        //@TestMetadata("beforeRemoveSupertype1.kt")
+        //public void testRemoveSupertype1() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeRemoveSupertype1.kt");
+        //}
+        //
+        //@TestMetadata("beforeRemoveSupertype2.kt")
+        //public void testRemoveSupertype2() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeRemoveSupertype2.kt");
+        //}
+        //
+        //@TestMetadata("beforeRemoveSupertype3.kt")
+        //public void testRemoveSupertype3() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeRemoveSupertype3.kt");
+        //}
+        //
+        //@TestMetadata("beforeRemoveSupertype4.kt")
+        //public void testRemoveSupertype4() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeRemoveSupertype4.kt");
+        //}
+        //
+        //@TestMetadata("beforeVisibilityModifer1.kt")
+        //public void testVisibilityModifer1() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeVisibilityModifer1.kt");
+        //}
+        //
+        //@TestMetadata("beforeVisibilityModifer2.kt")
+        //public void testVisibilityModifer2() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeVisibilityModifer2.kt");
+        //}
+        //
+        //@TestMetadata("beforeVisibilityModiferParameter.kt")
+        //public void testVisibilityModiferParameter() throws Exception {
+        //    doTest("idea/testData/quickfix/modifiers/beforeVisibilityModiferParameter.kt");
+        //}
         
         @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration")
         @InnerTestClasses({AddOpenToClassDeclaration.FinalJavaClass.class})

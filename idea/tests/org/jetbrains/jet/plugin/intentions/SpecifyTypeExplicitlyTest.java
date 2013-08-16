@@ -21,49 +21,49 @@ import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 public class SpecifyTypeExplicitlyTest extends LightIntentionActionTestCase {
-    public void testBadCaretPosition() {
-        doTest();
-    }
+    //public void testBadCaretPosition() {
+    //    doTest();
+    //}
+    //
+    //public void testClassNameClashing() {
+    //    doTest();
+    //}
+    //
+    //public void testFunctionType() {
+    //    doTest();
+    //}
+    //
+    //public void testStringRedefined() {
+    //    doTest();
+    //}
+    //
+    //public void testTypeAlreadyProvided() {
+    //    doTest();
+    //}
+    //
+    //public void testUnitType() {
+    //    doTest();
+    //}
+    //
+    //public void testUnknownType() {
+    //    doTest();
+    //}
 
-    public void testClassNameClashing() {
-        doTest();
-    }
-
-    public void testFunctionType() {
-        doTest();
-    }
-
-    public void testStringRedefined() {
-        doTest();
-    }
-
-    public void testTypeAlreadyProvided() {
-        doTest();
-    }
-
-    public void testUnitType() {
-        doTest();
-    }
-
-    public void testUnknownType() {
-        doTest();
-    }
-
-    public void testLoopParameter() {
-        doTest();
-    }
-
-    public void testOnType() {
-        doTest();
-    }
+    //public void testLoopParameter() {
+    //    doTest();
+    //}
+    //
+    //public void testOnType() {
+    //    doTest();
+    //}
 
     public void testEnumType() {
         doTest();
     }
 
-    public void testRemoveUnresolvedType() {
-        doTest();
-    }
+    //public void testRemoveUnresolvedType() {
+    //    doTest();
+    //}
 
     @Override
     protected String getTestDataPath() {
